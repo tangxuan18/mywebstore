@@ -10,15 +10,17 @@ import java.io.IOException;
 
 @WebFilter("/*")
 public class GlobalFilter implements Filter {
+
+    @Override
     public void destroy() {
     }
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
         /*设置全局的字符编码格式*/
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
         String requestURI = request.getRequestURI();
-//      System.out.println("global filter:" + requestURI);
         request.setCharacterEncoding("utf-8");
 
         //设置content-type这个写法有个坑，如果是图片，设置了该属性，则无法显示图片。
@@ -26,13 +28,16 @@ public class GlobalFilter implements Filter {
         //写了一个工具类，用于判断当前的请求是否请求的是静态资源
         //如果是静态资源，则不设置content-type属性
         boolean isStatic = StringUtils.isStaticResource(requestURI);
-        if(!isStatic){
+        boolean isPicture = StringUtils.isPicture(requestURI);
+        if (!isStatic && !isPicture) {
             response.setContentType("text/html; charset=utf-8");
         }
 
+        System.out.println("global filter:" + requestURI);
         chain.doFilter(req, resp);
     }
 
+    @Override
     public void init(FilterConfig config) throws ServletException {
 
     }

@@ -1,6 +1,5 @@
 package controller;
 
-import bean.Admin;
 import bean.Page;
 import bean.User;
 import org.apache.commons.beanutils.BeanUtils;

@@ -18,6 +18,7 @@ public class AdminServlet extends HttpServlet {
 
     private AdminService adminService = new AdminServiceImpl();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String operation = request.getParameter("operation");
         switch (operation) {
@@ -123,18 +124,21 @@ public class AdminServlet extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         /*校验*/
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) { // 非空校验
+        // 非空校验
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             response.getWriter().println("<script>alert('账号或密码不能为空！')</script>");
             return;
         }
-        if (!confirmPassword.equals(password)) { // 确认密码校验
+        // 确认密码校验
+        if (!confirmPassword.equals(password)) {
             response.getWriter().println("<script>alert('两次输入密码不同！')</script>");
             return;
         }
-
+        // 封装对象
         Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
+        // 传入对象
         int result = adminService.addAdmin(admin);
         switch (result) {
             case 0:
@@ -144,6 +148,8 @@ public class AdminServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('添加管理员成功！');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
                 break;
+            default:
+                response.getWriter().println("<script>alert('switch default服务器开小差了！');</script>");
         }
     }
 
