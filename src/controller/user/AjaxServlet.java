@@ -1,8 +1,8 @@
-package controller;
+package controller.user;
 
 import bean.User;
 import service.UserService;
-import service.UserServiceImpl;
+import service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +16,7 @@ public class AjaxServlet extends HttpServlet {
 
     private UserService userService = new UserServiceImpl();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
 /*        if("admin".equals(username)){

@@ -245,7 +245,7 @@
 											<span class="STYLE22">
 <c:if test="${page.currentPageNum != 1}">
 											<a href="${pageContext.request.contextPath }/admin/categoryServlet?operation=findPageCategories&num=${page.prevPageNum}"
-                                            onclick="prevPage()">上一页</a>
+                                               onclick="prevPage()">上一页</a>
 </c:if>
 											</span>
                                         </div>
@@ -254,7 +254,7 @@
 									    <div align="center">
 											<span class="STYLE22">
 <c:if test="${page.currentPageNum != page.totalPageNum}">
-											<a href="${pageContext.request.contextPath }/admin/categoryServlet?operation=findPageCategories&num=${page.nextPageNum}">下一页</a>
+    <a href="${pageContext.request.contextPath }/admin/categoryServlet?operation=findPageCategories&num=${page.nextPageNum}">下一页</a>
 </c:if>
 											</span>
 										</div>
@@ -280,7 +280,7 @@
                                     <td width="35">
                                         <div align="center">
                                             <span class="STYLE22">
-                                                <a  style="cursor:pointer;" onclick="jump()">跳转</a></span>
+                                                <a style="cursor:pointer;" onclick="jump()">跳转</a></span>
                                         </div>
                                     </td>
                                 </tr>
@@ -304,7 +304,10 @@
     });
 
     function prevPage() {
-        if( ${page.currentPageNum} === 1 ){
+        if (${page.currentPageNum} ===
+        1
+    )
+        {
             alert('已经是第一页！');
             return;
         }
@@ -321,7 +324,7 @@
             return;
         }
 
-        window.location.href = "${pageContext.request.contextPath}/admin/categoryServlet?operation=findPageCategories"+ "&num="+ num;
+        window.location.href = "${pageContext.request.contextPath}/admin/categoryServlet?operation=findPageCategories" + "&num=" + num;
     }
 
 </script>

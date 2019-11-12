@@ -17,7 +17,9 @@ import java.util.Properties;
  */
 public class DruidUtils {
 
-    //1.定义成员变量 DataSource
+    /**
+     *  定义成员变量 DataSource
+     */
     private static DataSource ds ;
 
     private static ThreadLocal<Connection> threadLocal = new ThreadLocal<>();
@@ -26,7 +28,8 @@ public class DruidUtils {
         try {
             //1.加载配置文件
             Properties pro = new Properties();
-            pro.load(DruidUtils.class.getClassLoader().getResourceAsStream("druid.properties")); // 使用getClassLoader()加载配置文件
+            // 使用getClassLoader()加载配置文件
+            pro.load(DruidUtils.class.getClassLoader().getResourceAsStream("druid.properties"));
             //2.初始化DataSource
             ds = DruidDataSourceFactory.createDataSource(pro);
         } catch (IOException e) {

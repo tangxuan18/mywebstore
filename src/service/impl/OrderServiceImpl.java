@@ -1,7 +1,11 @@
-package service;
+package service.impl;
 
 import bean.*;
 import dao.*;
+import dao.impl.CartDaoImpl;
+import dao.impl.OrderDaoImpl;
+import dao.impl.ProductDaoImpl;
+import service.OrderService;
 
 import java.util.List;
 
@@ -57,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page listPageOrders(int currentPageNum) {
-        Page page = new Page(); // 返回一个Page，且包含复杂查询
+        Page<Order> page = new Page<Order>();
         page.setList(orderDao.listPageOrders(currentPageNum));
         page.setTotalRecordsNum(orderDao.countTotalOrderCount());
         page.setCurrentPageNum(currentPageNum);

@@ -1,3 +1,5 @@
+<%--指明session域--%>
+<jsp:useBean id="user" scope="session" type="bean.User"/>
 <%@ page language="java" contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -55,8 +57,9 @@
                 <p>
                     <c:if test="${!empty user }">
                         <a href="${pageContext.request.contextPath }/user/personal.jsp">我的个人中心</a> |
+                        <a href="${pageContext.request.contextPath }/cartServlet?op=findCart&cartJsp=shoppingcart">购物车</a> |
+                        <a href="${pageContext.request.contextPath }/orderServlet?op=findUserOrders">我的订单</a> |
                     </c:if>
-                    <a href="${pageContext.request.contextPath }/cartServlet?op=findCart&cartJsp=shoppingcart">购物车</a> |
                     <c:if test="${empty user }">
                     <a href="${pageContext.request.contextPath }/user/login.jsp">登录</a> |
                     <a href="${pageContext.request.contextPath }/user/regist.jsp">注册</a></p>
@@ -131,7 +134,8 @@
                      email
                      birthday
                  -->
-                <form action="${pageContext.request.contextPath }/uploadUserInfoServlet" method="post" enctype="multipart/form-data">
+                <form action="${pageContext.request.contextPath }/uploadUserInfoServlet" method="post"
+                      enctype="multipart/form-data">
                     <input type="hidden" name="op" value="uploadUserInfo"/>
                     <input type="hidden" name="uid" value="${user.uid }"/>
                     用&nbsp;户&nbsp;名： ${user.username }
@@ -145,13 +149,13 @@
                     出生日期：<input type="text" name="birthday" value="${user.birthday}"/>
                     <br/><br/>
                     头像： <input type="file" name="headicon" value="${user.headicon}" accept="image/*"/>
-                    <img src="${user.headicon}" width="200px" height="180px>
+                    <img src="${user.headicon}" width="200px" height=180px>
                     <br/><br/>
                     注册时间： ${user.registTime }
                     <br/><br/>
                     <span>请准确填写您的信息，确保货物准确到达</span>
                     <br/><br/>
-                    详细地址 <input type="text" style="width: 400px" name="address" value="${user.address }"><span>*</span>
+                    详细地址 <input type=" text" style="width: 400px" name="address" value="${user.address }"><span>*</span>
                     <br/><br/>
                     联系电话 <input type="text" name="mobilePhone" value="${user.mobilePhone }"><span>*</span>
                     <br/><br/>

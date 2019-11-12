@@ -1,9 +1,9 @@
-package controller.admin;
+package controller;
 
 import bean.Category;
 import bean.Page;
 import service.CategoryService;
-import service.CategoryServiceImpl;
+import service.impl.CategoryServiceImpl;
 import utils.StringUtils;
 
 import javax.servlet.ServletException;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @WebServlet("/admin/categoryServlet")
@@ -20,17 +19,12 @@ public class CategoryServlet extends HttpServlet {
 
     private CategoryService categoryService = new CategoryServiceImpl();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-/*        String operation = null;
-        try{
-            operation = request.getParameter("operation");
-        }catch (Exception e){
-            e.printStackTrace();
-            response.getWriter().println("<script>alert('参数格式错误！');</script>"); // 校验前端传输参数
-        }*/
         String operation = request.getParameter("operation");
         if (operation == null) {
-            response.getWriter().println("<script>alert('operation参数格式错误！');</script>"); // 校验前端传输参数
+            // 校验前端传输参数
+            response.getWriter().println("<script>alert('operation参数格式错误！');</script>");
             return;
         }
         switch (operation) {
@@ -52,6 +46,8 @@ public class CategoryServlet extends HttpServlet {
             case "findPageCategories":
                 findPageCategories(request, response);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + operation);
         }
 
     }
@@ -79,7 +75,6 @@ public class CategoryServlet extends HttpServlet {
         }
         // 如果没有分类数据，得到null还是非null？？？ ————非null，各属性都有值
         Page currentPage = categoryService.findPageCategories(currentPageNum);
-        System.out.println(currentPage);
         if (currentPage == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
@@ -92,31 +87,30 @@ public class CategoryServlet extends HttpServlet {
             request.getSession().setAttribute("currentCategoryPageNum", currentPage.getCurrentPageNum());
             // 把当前页码 存入context
             request.getServletContext().setAttribute("totalPageNum", currentPage.getTotalPageNum());
-
             request.getRequestDispatcher("/admin/category/categoryList.jsp").forward(request, response);
         }
     }
 
     private void deleteMultiCategory(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] cidStrArray = request.getParameterValues("cid");
-        /*string数组转int数组*/
-        int[] cidArray = new int[cidStrArray.length];
-        for (int i = 0; i < cidStrArray.length; i++) {
-            cidArray[i] = Integer.parseInt(cidStrArray[i]);
-        }
-//        System.out.println(Arrays.toString(cidArray));
-        if (cidArray == null) {
+        if (cidStrArray == null) {
             response.getWriter().println("<script>alert('请选择分类！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                     request.getSession().getAttribute("currentCategoryPageNum"));
             return;
         }
+        /*string数组转int数组*/
+        int[] cidArray = new int[cidStrArray.length];
+        for (int i = 0; i < cidStrArray.length; i++) {
+            cidArray[i] = Integer.parseInt(cidStrArray[i]);
+        }
         for (int cid : cidArray) {
             int result = categoryService.deleteCategory(cid);
             switch (result) {
                 case 0:
-                    response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                    response.getWriter().println("<script>alert('服务器开小差了！');</script>" + "cid = "+ cid);
                     break;
+                default:
             }
         }
         response.getWriter().println("<script>alert('删除分类成功！');</script>");
@@ -125,6 +119,7 @@ public class CategoryServlet extends HttpServlet {
 
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.doPost(request, response);
     }
@@ -147,6 +142,8 @@ public class CategoryServlet extends HttpServlet {
                 response.setHeader("refresh", "0,    url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 
@@ -163,6 +160,8 @@ public class CategoryServlet extends HttpServlet {
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 
@@ -177,8 +176,10 @@ public class CategoryServlet extends HttpServlet {
             return;
         } else if (categoryList != null && categoryList.size() != 0) {
             System.out.println("categoryList = " + categoryList);
-            request.setAttribute("categories", categoryList); // 存入request域
-            request.getServletContext().setAttribute("categories", categoryList); // 存入context域
+            // 存入request域
+            request.setAttribute("categories", categoryList);
+            // 存入context域
+            request.getServletContext().setAttribute("categories", categoryList);
             request.getRequestDispatcher("/admin/product/addProduct.jsp").forward(request, response);
         }
     }
@@ -189,7 +190,6 @@ public class CategoryServlet extends HttpServlet {
             response.getWriter().println("cname参数不能为空");
             return;
         }
-
         int addResult = categoryService.addCategory(cname);
         switch (addResult) {
             case 0:
@@ -200,6 +200,8 @@ public class CategoryServlet extends HttpServlet {
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + addResult);
         }
     }
 

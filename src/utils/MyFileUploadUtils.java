@@ -39,7 +39,8 @@ public class MyFileUploadUtils {
         /*解析request*/
         Map<String, String> resultMap = new LinkedHashMap<>();
         try {
-            List<FileItem> items = upload.parseRequest(request); // Processes an RFC 1867 compliant multipart/form-data stream
+            // Processes an RFC 1867 compliant multipart/form-data stream
+            List<FileItem> items = upload.parseRequest(request);
             // 获取迭代器对象
             Iterator<FileItem> iter = items.iterator();
             /*迭代遍历List<FileItem>，逐个封装进Map*/

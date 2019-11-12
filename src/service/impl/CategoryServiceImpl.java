@@ -1,9 +1,10 @@
-package service;
+package service.impl;
 
 import bean.Category;
 import bean.Page;
 import dao.CategoryDao;
-import dao.CategoryDaoImpl;
+import dao.impl.CategoryDaoImpl;
+import service.CategoryService;
 
 import java.util.List;
 
@@ -38,7 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public Page findPageCategories(int currentPageNum) {
-        Page page = new Page(); // 返回一个Page，且包含复杂查询
+        // 返回一个Page，且包含复杂查询
+        Page page = new Page();
         page.setList(categoryDao.findPageCategories(currentPageNum));
         page.setTotalRecordsNum(categoryDao.findTotalCount());
         page.setCurrentPageNum(currentPageNum);

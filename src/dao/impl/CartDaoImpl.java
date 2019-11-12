@@ -1,8 +1,9 @@
-package dao;
+package dao.impl;
 
 import bean.Cart;
 import bean.CartItem;
 import bean.Product;
+import dao.CartDao;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;

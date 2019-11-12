@@ -1,4 +1,4 @@
-package controller;
+package controller.user;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * @author user
+ *
  */
-@WebServlet(name = "VerifycodeImgServlet", urlPatterns = "/verifyCode.jpg")
+@WebServlet(urlPatterns = "/verifyCode.jpg", name = "VerifycodeImgServlet")
 public class VerifycodeImgServlet extends HttpServlet {
     // 集合中保存所有成语
     private List<String> words = new ArrayList<String>();
@@ -46,8 +46,8 @@ public class VerifycodeImgServlet extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8");
         // 禁止缓存
-         response.setHeader("Cache-Control", "no-cache");
-         response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", -1);
 
         int width = 120;
@@ -76,7 +76,7 @@ public class VerifycodeImgServlet extends HttpServlet {
         int index = random.nextInt(words.size());
         String word = words.get(index);// 获得成语
 
-        System.out.println("session word="+word);
+        System.out.println("session word=" + word);
 
         // 定义x坐标
         int x = 10;
@@ -130,10 +130,8 @@ public class VerifycodeImgServlet extends HttpServlet {
     /**
      * 取其某一范围的color
      *
-     * @param fc
-     *            int 范围参数1
-     * @param bc
-     *            int 范围参数2
+     * @param fc int 范围参数1
+     * @param bc int 范围参数2
      * @return Color
      */
     private Color getRandColor(int fc, int bc) {

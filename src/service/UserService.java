@@ -17,4 +17,6 @@ public interface UserService {
     Page listPageUsers(int currentPageNum);
 
     int updateUser(User user);
+
+    int addUserBackground(User user);
 }

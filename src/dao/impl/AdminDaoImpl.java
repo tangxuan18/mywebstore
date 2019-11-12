@@ -1,7 +1,7 @@
-package dao;
+package dao.impl;
 
 import bean.Admin;
-import bean.Category;
+import dao.AdminDao;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -18,7 +18,7 @@ public class AdminDaoImpl implements AdminDao {
     public Admin findLoginAdmin(Admin admin) {
         Admin currentAdmin = null;
         try {
-            currentAdmin =  runner.query("select * from t_admin where username = ? and password = ?",
+            currentAdmin =  runner.query("select id, username, password from t_admin where username = ? and password = ?",
                     new BeanHandler<>(Admin.class), admin.getUsername(), admin.getPassword());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,7 +41,7 @@ public class AdminDaoImpl implements AdminDao {
     public List<Admin> findAllAdmin() {
         List<Admin> list = null;
         try {
-            list = runner.query("select * from t_admin", new BeanListHandler<>(Admin.class));
+            list = runner.query("select id, username, password from t_admin", new BeanListHandler<>(Admin.class));
         } catch (SQLException e) {
             e.printStackTrace();
         }

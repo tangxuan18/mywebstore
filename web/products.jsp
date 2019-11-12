@@ -35,10 +35,9 @@
 </head>
 
 <body>
-<c:if test="${empty categories }">
+<%--<c:if test="${empty categories }">
     <jsp:forward page="/mainServlet?op=findAllCategories&jsp=products"></jsp:forward>
-</c:if>
-
+</c:if>--%>
 <div id="templatemo_body_wrapper">
     <div id="templatemo_wrapper">
 
@@ -49,12 +48,12 @@
                 <p>
                     <c:if test="${!empty user }">
                         <a href="${pageContext.request.contextPath }/user/personal.jsp">我的个人中心</a> |
+                        <a href="${pageContext.request.contextPath }/cartServlet?op=findCart&cartJsp=shoppingcart">购物车</a> |
+                        <a href="${pageContext.request.contextPath }/orderServlet?op=findUserOrders">我的订单</a> |
                     </c:if>
-                    <a href="${pageContext.request.contextPath }/cartServlet?op=findCart&cartJsp=shoppingcart">购物车</a> |
-                    <a href="${pageContext.request.contextPath }/orderServlet?op=findUserOrders">我的订单</a> |
                     <c:if test="${empty user }">
                     <a href="${pageContext.request.contextPath }/user/login.jsp">登录</a> |
-                    <a href="${pageContext.request.contextPath }/user/regist.jsp">注册</a></p>F
+                    <a href="${pageContext.request.contextPath }/user/regist.jsp">注册</a></p>
                 </c:if>
                 <c:if test="${!empty user }">
                     ${user.nickname }
@@ -83,6 +82,7 @@
         </div> <!-- END of templatemo_menubar -->
         <div class="copyrights">Collect from <a href="#" title="Web商城">Web商城</a></div>
 
+        <%--根据分类查询商品--%>
         <div id="templatemo_main">
             <div id="sidebar" class="float_l">
                 <div class="sidebar_box"><span class="bottom"></span>
@@ -113,9 +113,12 @@
                 </div>
             </div>
 
+            <%--模糊查询，根据分类名或商品名--%>
             <div id="content" class="float_r">
-                <c:if test="${!empty cname}"><span><h3 style="width:600px;heigth:40px;background: #EEEEEE; padding: 10px"> ${cname} </h3></span></c:if>
-                <c:if test="${!empty requestScope.keyword}"><span><h3 style="width:600px;heigth:40px;background: #EEEEEE; padding: 10px"> "${requestScope.keyword}"的相关结果 </h3></span></c:if>
+                <c:if test="${!empty cname}"><span><h3
+                        style="width:600px;heigth:40px;background: #EEEEEE; padding: 10px"> ${cname} </h3></span></c:if>
+                <c:if test="${!empty requestScope.keyword}"><span><h3
+                        style="width:600px;heigth:40px;background: #EEEEEE; padding: 10px"> "${requestScope.keyword}"的相关结果 </h3></span></c:if>
                 <c:forEach items="${requestScope.products }" var="product" varStatus="vs">
                     <div class="${vs.index % 3 != 2?'product_box':'product_box no_margin_right' }">
                         <a href="${pageContext.request.contextPath }/mainServlet?op=findProductByPid&pid=${product.id}">

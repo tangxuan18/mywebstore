@@ -1,7 +1,8 @@
-package dao;
+package dao.impl;
 
 import bean.Category;
 import bean.Page;
+import dao.CategoryDao;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -67,8 +68,10 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> findPageCategories(int currentPageNum) {
         List<Category> categoryList = null;
         try {
-            categoryList = runner.query("select * from t_category order by id asc limit ? offset ?", new BeanListHandler<>(Category.class),
-                    Page.getPageSize(), (currentPageNum - 1) * Page.getPageSize()); // 偏移量
+            // 偏移量
+            categoryList = runner.query("select id, cname from t_category order by id desc limit ? offset ?",
+                    new BeanListHandler<>(Category.class),
+                    Page.getPageSize(), (currentPageNum - 1) * Page.getPageSize());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -77,9 +80,11 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public int findTotalCount() {
-        Long totalCount = 0L; //Long型后加大L
+        //Long型后加大L
+        Long totalCount = 0L;
+        // 返回Long类型
         try {
-            totalCount = (Long) runner.query("select count(id) from t_category", new ScalarHandler()); // 返回Long类型
+            totalCount = (Long) runner.query("select count(id) from t_category", new ScalarHandler());
         } catch (SQLException e) {
             e.printStackTrace();
         }

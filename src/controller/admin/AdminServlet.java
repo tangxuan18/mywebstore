@@ -2,7 +2,7 @@ package controller.admin;
 
 import bean.Admin;
 import service.AdminService;
-import service.AdminServiceImpl;
+import service.impl.AdminServiceImpl;
 import utils.StringUtils;
 
 import javax.servlet.ServletException;
@@ -43,6 +43,8 @@ public class AdminServlet extends HttpServlet {
             case "deleteMulti":
                 deleteMultiAdmin(request, response);
                 break;
+            default:
+
         }
     }
 
@@ -54,15 +56,17 @@ public class AdminServlet extends HttpServlet {
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findAllCategory");
             return;
         }
+        // 采用循环deleteOne的方式
         for (String aid : aidArray) {
             int result = adminService.deleteOneAdmin(aid);
             switch (result) {
                 case 0:
                     response.getWriter().println("<script>alert('服务器开小差了！');</script>");
                     break;
+                default:
             }
         }
-        response.getWriter().println("<script>alert('删除管理员成功！');</script>");
+        response.getWriter().println("<script>alert('批量删除管理员成功！');</script>");
         response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
     }
 
@@ -74,7 +78,6 @@ public class AdminServlet extends HttpServlet {
         admin.setId(aid);
         admin.setUsername(username);
         admin.setPassword(password);
-
         int result = adminService.updateAdmin(admin);
         switch (result) {
             case 0:
@@ -84,6 +87,7 @@ public class AdminServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('修改管理员成功！');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
                 break;
+            default:
         }
     }
 
@@ -104,6 +108,7 @@ public class AdminServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('删除管理员成功！');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
                 break;
+            default:
         }
     }
 
@@ -114,6 +119,7 @@ public class AdminServlet extends HttpServlet {
             return;
         } else {
             System.out.println("adminList = " + adminList);
+            // 放入request域
             request.setAttribute("admins", adminList);
             request.getRequestDispatcher("/admin/admin/adminList.jsp").forward(request, response);
         }
@@ -167,12 +173,10 @@ public class AdminServlet extends HttpServlet {
         Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
-
         Admin currentAdmin = adminService.findLoginAdmin(admin);
         if (currentAdmin == null) {
             response.getWriter().println("<script>alert('用户名或密码错误');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/index.jsp");
-            return;
         } else {
             System.out.println("currentAdmin = " + currentAdmin);
             // currentAdmin存入session域
@@ -182,6 +186,7 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.doPost(request, response);
     }

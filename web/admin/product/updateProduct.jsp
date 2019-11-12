@@ -50,11 +50,10 @@
 </head>
 
 
-
 <body>
-<c:if test="${empty categories}">
+<%--<c:if test="${empty categories}">
     <jsp:forward page="/admin/productServlet?op=findAllCategories&jsp=updateProduct"></jsp:forward>
-</c:if>
+</c:if>--%>
 <%-- <form method="post" action="${pageContext.request.contextPath }/ProductServlet"> --%>
 <form method="post" action="${pageContext.request.contextPath }/admin/productServlet" enctype="multipart/form-data">
 
@@ -62,8 +61,8 @@
     <%--传参pid--%>
     <input type="hidden" name="id" value="${requestScope.product.id}">
     <%--如果图片不作修改，图片为空，则传参为原来的url--%>
-<%--    <input type="hidden" name="imgUrl" value="${requestScope.product.imgUrl}">
-    ${requestScope.product.imgUrl}--%>
+    <%--    <input type="hidden" name="imgUrl" value="${requestScope.product.imgUrl}">
+        ${requestScope.product.imgUrl}--%>
 
     <table width="100%" border="0" align="center" cellpadding="0"
            cellspacing="0">
@@ -124,11 +123,12 @@
                         <td width="80%" height="20" bgcolor="d3eaef" class="STYLE6">
                             <div
                                     align="left">
-                                <select name="cid" id="st" onchange="change()" >
-                                    <c:forEach items="${requestScope.categories}" var="category">
+                                <select name="cid" id="st" onchange="change()">
+                                    <c:forEach items="${applicationScope.categories}" var="category">
                                         <%--value定义送往服务器的选项值。--%>
                                         <%--如何回显上次的选择值？？———— 判断外键cid相等--%>
-                                        <option value="${category.id}" <c:if test="${category.id eq requestScope.product.cid}">selected</c:if>>
+                                        <option value="${category.id}"
+                                                <c:if test="${category.id eq requestScope.product.cid}">selected</c:if>>
                                                 ${category.cname}
                                         </option>
                                     </c:forEach>
@@ -279,7 +279,7 @@
 
                                 <%----%>
                                 如果需要修改图片，请点击“选择文件”
-                                 <input type="file" name="imgUrl" accept="image/*"/><br>
+                                <input type="file" name="imgUrl" accept="image/*"/><br>
 
                                 <img id="oldImg" width="200px" height="180px"
                                      src="${pageContext.request.contextPath}/${product.imgUrl}"/>

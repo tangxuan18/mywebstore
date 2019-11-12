@@ -1,7 +1,8 @@
-package dao;
+package dao.impl;
 
 import bean.Page;
 import bean.Product;
+import dao.ProductDao;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -11,6 +12,9 @@ import utils.DruidUtils;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author GFS
+ */
 public class ProductDaoImpl implements ProductDao {
 
     private QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -33,13 +37,20 @@ public class ProductDaoImpl implements ProductDao {
         List<Product> productList = null;
         try {
             productList = runner.query("select p.*, c.cname from t_product p inner join t_category c on p.cid = c.id order by id desc limit ? offset ?",
-                    new BeanListHandler<>(Product.class), Page.getPageSize(), (currentPageNum - 1) * Page.getPageSize()); // 偏移量
+                    new BeanListHandler<>(Product.class), Page.getPageSize(), (currentPageNum - 1) * Page.getPageSize());
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return productList;
     }
 
+    /**
+     *
+     * @param currentPageNum
+     * @param searchSql
+     * @param sqlParaList 多条件+分页 查询 的 参数列表
+     * @return
+     */
     @Override
     public List<Product> listPageSearchedProducts(int currentPageNum, String searchSql, List sqlParaList) {
         List<Product> productList = null;
@@ -111,7 +122,8 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> listProductsByKeyword(String keyword) {
         List<Product> productList = null;
         try {
-            productList = runner.query("select p.*, c.cname from t_product p inner join t_category c on p.cid = c.id where c.cname like ? or p.productName like ?", new BeanListHandler<>(Product.class),
+            productList = runner.query("select p.*, c.cname from t_product p inner join t_category c on p.cid = c.id where c.cname like ? or p.productName like ?",
+                    new BeanListHandler<>(Product.class),
                     "%"+keyword+"%", "%"+keyword+"%");
         } catch (SQLException e) {
             e.printStackTrace();

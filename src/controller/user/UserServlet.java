@@ -1,10 +1,10 @@
-package controller;
+package controller.user;
 
 import bean.Page;
 import bean.User;
 import org.apache.commons.beanutils.BeanUtils;
 import service.UserService;
-import service.UserServiceImpl;
+import service.impl.UserServiceImpl;
 import utils.MailUtils;
 import utils.MyFileUploadUtils;
 import utils.StringUtils;
@@ -26,6 +26,7 @@ public class UserServlet extends HttpServlet {
 
     private UserService userService = new UserServiceImpl();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //        Map<String, String> map = MyFileUploadUtils.parseRequest(request);
 //        String op = map.get("op");
@@ -45,15 +46,14 @@ public class UserServlet extends HttpServlet {
             case "regist":
                 register(request, response);
                 break;
-            case "uploadPersonalInfo":
+/*            case "uploadPersonalInfo":
                 uploadPersonalInfo(request, response);
-                break;
+                break;*/
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
-    private void uploadPersonalInfo(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> map = MyFileUploadUtils.parseRequest(request);
-    }
 
     private void register(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, String[]> parameterMap = request.getParameterMap();
@@ -67,7 +67,6 @@ public class UserServlet extends HttpServlet {
             e.printStackTrace();
             response.getWriter().println("<script>alert('参数封装失败！');</script>");
         }
-        /*在后端给对象属性赋值*/
         user.setRegistTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         user.setActivationStatus("N");
         /*发送验证邮件*/
@@ -75,8 +74,7 @@ public class UserServlet extends HttpServlet {
         user.setActivationCode(activationCode);
         String activationMassage = "<a href='http://192.168.8.66/WebBookStore/userServlet?op=activateEmail&uuid=" + activationCode + "'>点我激活webStore账号</a>";
         MailUtils.sendMail(user.getEmail(), activationMassage);
-
-        int result = userService.register(user); // 传入对象
+        int result = userService.register(user);
         switch (result) {
             case 0:
                 response.getWriter().println("<script>alert('服务器开小差了');</script>");
@@ -85,6 +83,8 @@ public class UserServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('注册成功，请继续验证邮箱！');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 
@@ -101,9 +101,9 @@ public class UserServlet extends HttpServlet {
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         /*检查验证码*/
-        String checkcode_session = (String) request.getSession().getAttribute("checkcode_session");
+        String checkcodeSession = (String) request.getSession().getAttribute("checkcode_session");
         String verifyCode = request.getParameter("verifyCode");
-        if (!checkcode_session.equals(verifyCode)) {
+        if (!checkcodeSession.equals(verifyCode)) {
             response.getWriter().println("<script>alert('验证码错误');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/user/login.jsp");
             return;
@@ -113,7 +113,6 @@ public class UserServlet extends HttpServlet {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-
         User currentUser = userService.getLoginUser(user);
         if (currentUser == null) {
             response.getWriter().println("<script>alert('用户名或密码错误');</script>");
@@ -128,20 +127,38 @@ public class UserServlet extends HttpServlet {
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String username = request.getParameter("username");
+/*        String username = request.getParameter("username");
         String nickname = request.getParameter("nickname");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
-        Date birthday = null;
+        String birthday = request.getParameter("birthday");*/
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        User user = new User();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            birthday = sdf.parse(request.getParameter("birthday"));
-        } catch (Exception e) {
+            BeanUtils.populate(user, parameterMap);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('参数类型错误！');</script>");
+            response.getWriter().println("<script>alert('BeanUtils参数封装失败！');</script>");
+        }
+        user.setRegistTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        user.setActivationCode("vip后台注册");
+        // 免邮箱注册
+        user.setActivationStatus("Y");
+        int result = userService.addUserBackground(user);
+        switch (result) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了');</script>");
+                break;
+            case 1:
+                response.getWriter().println("<script>alert('后台添加普通用户成功！');</script>");
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "userServlet?op=findPageUsers&num=1");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
@@ -158,6 +175,8 @@ public class UserServlet extends HttpServlet {
             case "findPageUsers":
                 findPageUsers(request, response);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 

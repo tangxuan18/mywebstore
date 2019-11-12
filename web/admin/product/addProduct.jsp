@@ -51,19 +51,17 @@
 </head>
 
 <body>
-<c:if test="${empty categories}">
-    <%--如果跳转到categoryServlet，则categoryServlet只能转发到一个页面，不能用于多个页面--%>
-    <%--    <jsp:forward page="/admin/categoryServlet?operation=findAllCategory"></jsp:forward>--%>
-    <%--方法一：先查询数据库获得目录数据
-         方法二：从context域获取目录数据--%>
-    <jsp:forward page="/admin/productServlet?op=findAllCategories&jsp=addProduct"></jsp:forward>
-</c:if>
+<%--<c:if test="${empty categories}">
+    &lt;%&ndash;如果跳转到categoryServlet，则categoryServlet只能转发到一个页面，不能用于多个页面&ndash;%&gt;
+    &lt;%&ndash;方法一：先查询数据库获得目录数据
+         方法二：从context域获取目录数据&ndash;%&gt;
+&lt;%&ndash;    <jsp:forward page="/admin/categoryServlet?operation=findAllCategories"></jsp:forward>&ndash;%&gt;
+</c:if>--%>
 
 <%--包含文件上传 enctype="multipart/form-data"--%>
-<form method="post" action="${pageContext.request.contextPath }/admin/productServlet"
-      enctype="multipart/form-data">
+<%--enctype="multipart/form-data"时，post参数无法被servlet接收--%>
+<form method="post" action="${pageContext.request.contextPath }/admin/productServlet" enctype="multipart/form-data">
 
-    <%--enctype="multipart/form-data"时，post参数无法被servlet接收--%>
     <input type="hidden" name="op" value="addProduct"/>
 
     <table width="100%" border="0" align="center" cellpadding="0"
@@ -130,8 +128,8 @@
                                     align="left">
 
                                 <select name="cid" id="st" onchange="change()">
-<%--                                    <option value="0" selected="selected">——请选择——</option>--%>
-                                    <c:forEach items="${requestScope.categories}" var="category">
+                                    <%--                                    <option value="0" selected="selected">——请选择——</option>--%>
+                                    <c:forEach items="${applicationScope.categories}" var="category">
                                         <option value="${category.id}">${category.cname}</option>
                                     </c:forEach>
                                 </select>

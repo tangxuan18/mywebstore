@@ -1,7 +1,8 @@
-package dao;
+package dao.impl;
 
 import bean.Page;
 import bean.User;
+import dao.UserDao;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -11,6 +12,9 @@ import utils.DruidUtils;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author GFS
+ */
 public class UserDaoImpl implements UserDao {
 
     private QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -89,7 +93,7 @@ public class UserDaoImpl implements UserDao {
     public int countTotalUserCount() {
         Long totalCount = 0L; //Long型后加大L
         try {
-            totalCount = (Long) runner.query("select count(uid) from t_user", new ScalarHandler()); // 返回Long类型
+            totalCount = (Long) runner.query("select count(uid) from t_user", new ScalarHandler());
         } catch (SQLException e) {
             e.printStackTrace();
         }

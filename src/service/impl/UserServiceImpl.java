@@ -1,9 +1,10 @@
-package service;
+package service.impl;
 
 import bean.Page;
 import bean.User;
 import dao.UserDao;
-import dao.UserDaoImpl;
+import dao.impl.UserDaoImpl;
+import service.UserService;
 
 public class UserServiceImpl implements UserService {
 
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page listPageUsers(int currentPageNum) {
-        Page page = new Page(); // 返回一个Page，且包含复杂查询
+        Page<User> page = new Page<User>();
         page.setList(userDao.listPageUsers(currentPageNum));
         page.setTotalRecordsNum(userDao.countTotalUserCount());
         page.setCurrentPageNum(currentPageNum);
@@ -52,5 +53,10 @@ public class UserServiceImpl implements UserService {
                 "', address = '" + user.getAddress() + "', mobilePhone = '" + user.getMobilePhone() + "', qq = '" + user.getQq() +
                 "' where uid = " + user.getUid();
         return userDao.updateUser(sql);
+    }
+
+    @Override
+    public int addUserBackground(User user) {
+        return userDao.register(user);
     }
 }

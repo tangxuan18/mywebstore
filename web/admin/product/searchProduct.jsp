@@ -49,13 +49,6 @@
 </head>
 
 <body>
-<c:if test="${empty categories}">
-    <%--如果跳转到categoryServlet，则categoryServlet只能转发到一个页面，不能用于多个页面--%>
-    <%--    <jsp:forward page="/admin/categoryServlet?operation=findAllCategory"></jsp:forward>--%>
-    <%--方法一：先查询数据库获得目录数据
-         方法二：从context域获取目录数据--%>
-    <jsp:forward page="/admin/productServlet?op=findAllCategories&jsp=searchProduct"></jsp:forward>
-</c:if>
 
 <form method="get" action="${pageContext.request.contextPath }/admin/productServlet?">
 
@@ -110,7 +103,7 @@
                 商品编号：
             </td>
             <td class="ta_01" bgcolor="#a8c7ce">
-                <input type="text" name="productNum" size="15" value="" id="Form1_userName"/>
+                <input type="text" name="productNum" size="15" value="${sessionScope.searchProduct.productNum}" id="Form1_userName"/>
             </td>
             <td height="22" align="center" bgcolor="#a8c7ce">
                 分类：
@@ -118,9 +111,11 @@
             <td bgcolor="#a8c7ce">
 
                 <select name="cid" id="st" onchange="change()">
-                    <option value="0" selected="selected">——请选择——</option>
-                    <c:forEach items="${categories}" var="category">
-                        <option value="${category.id}">${category.cname}</option>
+                    <option value="${sessionScope.searchProduct.cname}" selected="selected">——请选择——</option>
+                    <c:forEach items="${applicationScope.categories}" var="category">
+                        <option value="${category.id}">
+                                ${category.cname}
+                        </option>
                     </c:forEach>
                 </select>
 
@@ -133,15 +128,15 @@
                 商品名称：
             </td>
             <td bgcolor="#a8c7ce">
-                <input type="text" name="productName" size="15" value="" id="Form1_userName" class="bg"/>
+                <input type="text" name="productName" size="15" value="${sessionScope.searchProduct.productName}" id="Form1_userName" class="bg"/>
             </td>
 
             <td height="22" align="center" bgcolor="#a8c7ce">
                 商城价格区间(元)：
             </td>
             <td bgcolor="#a8c7ce">
-                <input type="text" name="minWebStorePrice" size="10" value=""/>-
-                <input type="text" name="maxWebStorePrice" size="10" value=""/></td>
+                <input type="text" name="minWebStorePrice" size="10" value="${sessionScope.searchProduct.minWebStorePrice}"/>-
+                <input type="text" name="maxWebStorePrice" size="10" value="${sessionScope.searchProduct.maxWebStorePrice}"/></td>
         </tr>
 
         <tr class="STYLE10">

@@ -1,13 +1,11 @@
 package controller;
 
 import bean.Category;
-import bean.Page;
 import bean.Product;
-import dao.CategoryDao;
 import service.CategoryService;
-import service.CategoryServiceImpl;
+import service.impl.CategoryServiceImpl;
 import service.ProductService;
-import service.ProductServiceImpl;
+import service.impl.ProductServiceImpl;
 import utils.StringUtils;
 
 import javax.servlet.ServletException;
@@ -24,14 +22,16 @@ public class MainServlet extends HttpServlet {
     private CategoryService categoryService = new CategoryServiceImpl();
     private ProductService productService = new ProductServiceImpl();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op参数为空get！');</script>"); // 校验前端传输参数
+            response.getWriter().println("<script>alert('op参数为空get！');</script>");
             return;
         }
         switch (op){
@@ -53,6 +53,8 @@ public class MainServlet extends HttpServlet {
             case "findProductsByKeyword":
                 findProductsByKeyword(request, response);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
@@ -65,7 +67,7 @@ public class MainServlet extends HttpServlet {
         if (productList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
-        } else if (productList!= null && productList.size() == 0) {
+        } else if (productList.size() == 0) {
             response.getWriter().println("<script>alert('很遗憾，没有相关商品');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
@@ -99,21 +101,20 @@ public class MainServlet extends HttpServlet {
         String cname = request.getParameter("cname");
         int cid = 0;
         try {
-            cid = Integer.valueOf(request.getParameter("cid"));
+            cid = Integer.parseInt(request.getParameter("cid"));
         }catch (Exception e) {
             e.printStackTrace();
             response.getWriter().println("<script>alert('cid参数类型错误！');</script>");
         }
-
         List<Product> productList = productService.listProductsByCid(cid);
         if (productList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
-        } else if (productList!= null && productList.size() == 0) {
+        } else if (productList.size() == 0) {
             response.getWriter().println("<script>alert('该分类尚无商品！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
-        } else if (productList.size() != 0) {
+        } else {
             request.setAttribute("products", productList);
             request.setAttribute("cname", cname);
             request.getRequestDispatcher("/products.jsp").forward(request, response);
@@ -125,11 +126,11 @@ public class MainServlet extends HttpServlet {
         if (hotProductList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
-        } else if (hotProductList!= null && hotProductList.size() == 0) {
+        } else if (hotProductList.size() == 0) {
             response.getWriter().println("<script>alert('尚无热门商品！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
-        } else if (hotProductList != null && hotProductList.size() != 0) {
+        } else {
             request.setAttribute("hotProducts", hotProductList);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
@@ -140,11 +141,11 @@ public class MainServlet extends HttpServlet {
         if (topProductList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
-        } else if (topProductList!= null && topProductList.size() == 0) {
+        } else if (topProductList.size() == 0) {
             response.getWriter().println("<script>alert('尚无顶尖商品！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
-        } else if (topProductList != null && topProductList.size() != 0) {
+        } else {
             request.setAttribute("topProducts", topProductList);
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }

@@ -35,10 +35,10 @@
 </head>
 
 <body>
-<%--加载分类--%>
+<%--加载分类
 <c:if test="${empty categories }">
     <jsp:forward page="/mainServlet?op=findAllCategories&jsp=index"></jsp:forward>
-</c:if>
+</c:if>--%>
 <%--加载轮播图--%>
 <c:if test="${empty topProducts }">
     <jsp:forward page="/mainServlet?op=findTopProducts"></jsp:forward>
@@ -68,7 +68,7 @@
                 <c:if test="${!empty sessionScope.user }">
                     ${sessionScope.user.nickname }
                     <img id="oldImg" width="50px" height="50px"
-                         src="${pageContext.request.contextPath}/${user.headicon}"/>
+                         src="${pageContext.request.contextPath}/${sessionScope.user.headicon}"/>
                     <a href="${pageContext.request.contextPath }/userServlet?op=logout">退出</a></p>
                 </c:if>
             </div>
@@ -100,7 +100,7 @@
                     <h3>品牌</h3>
                     <div class="content">
                         <ul class="sidebar_list">
-                            <c:forEach items="${categories}" var="category" varStatus="vs">
+                            <c:forEach items="${applicationScope.categories}" var="category" varStatus="vs">
                                 <c:if test="${vs.index !=0}">
                                     <c:if test="${vs.index != fn:length(categories)-1 }">
                                         <li>

@@ -5,9 +5,9 @@ import bean.OrderItem;
 import bean.Page;
 import bean.User;
 import service.OrderService;
-import service.OrderServiceImpl;
+import service.impl.OrderServiceImpl;
 import service.ProductService;
-import service.ProductServiceImpl;
+import service.impl.ProductServiceImpl;
 import utils.StringUtils;
 
 import javax.servlet.ServletException;
@@ -21,12 +21,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author GFS
+ */
 @WebServlet("/orderServlet")
 public class OrderServlet extends HttpServlet {
 
     private OrderService orderService = new OrderServiceImpl();
     private ProductService productService = new ProductServiceImpl();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
@@ -37,6 +41,8 @@ public class OrderServlet extends HttpServlet {
             case "placeOrder":
                 placeOrder(request, response); // »∑»œ∂©µ•
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
@@ -107,6 +113,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
@@ -126,6 +133,8 @@ public class OrderServlet extends HttpServlet {
             case "cancelOrder":
                 cancelOrder(request, response);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 

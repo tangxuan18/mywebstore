@@ -4,7 +4,10 @@ import java.util.List;
 
 public class Page<T> {
 
-    private List<T> list; // 分类列表属性
+    /**
+     * 列表属性
+     */
+    private List<T> list;
 
     private int totalRecordsNum;
 
@@ -16,7 +19,11 @@ public class Page<T> {
 
     private int nextPageNum;
 
-    private static final int PAGE_SIZE = 3;  //对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象。
+    /**
+     * 对于一个final变量，如果是基本数据类型的变量，则其数值一旦在初始化之后便不能更改；
+     * 如果是引用类型的变量，则在对其初始化之后便不能再让其指向另一个对象。
+     */
+    private static final int PAGE_SIZE = 5;
 
     public List<T> getList() {
         return list;

@@ -9,6 +9,7 @@
 
 <body background="${pageContext.request.contextPath}/images/bg.png">
 	<br /><br />
-	<!-- <p align="center"><font style="font-family:隶书" size="8">welcome!</font></p> -->
+	<p align="center"><font style="font-family:隶书" size="8">welcome to Shane's webstore!</font></p>
+	<p align="center"><font style="font-family:隶书" size="8">contact: tangxuan@nudt.edu.cn</font></p>
 </body>
 </html>

@@ -1,8 +1,9 @@
-package dao;
+package dao.impl;
 
 import bean.Order;
 import bean.OrderItem;
 import bean.Page;
+import dao.OrderDao;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
@@ -57,7 +58,7 @@ public class OrderDaoImpl implements OrderDao {
         List<Order> orderList = null;
         try {
             orderList = runner.query("select * from t_order order by orderId desc limit ? offset ?",
-                    new BeanListHandler<>(Order.class), Page.getPageSize(), (currentPageNum - 1) * Page.getPageSize()); // 偏移量
+                    new BeanListHandler<>(Order.class), Page.getPageSize(), (currentPageNum - 1) * Page.getPageSize());
         } catch (SQLException e) {
             e.printStackTrace();
         }

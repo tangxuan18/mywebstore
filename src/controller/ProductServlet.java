@@ -1,13 +1,13 @@
-package controller.admin;
+package controller;
 
 import bean.Category;
 import bean.Page;
 import bean.Product;
 import org.apache.commons.beanutils.BeanUtils;
 import service.CategoryService;
-import service.CategoryServiceImpl;
+import service.impl.CategoryServiceImpl;
 import service.ProductService;
-import service.ProductServiceImpl;
+import service.impl.ProductServiceImpl;
 import utils.MyFileUploadUtils;
 import utils.StringUtils;
 
@@ -26,18 +26,19 @@ public class ProductServlet extends HttpServlet {
 
     private ProductService productService = new ProductServiceImpl();
     private CategoryService categoryService = new CategoryServiceImpl();
+
     /**
      * 增 改 商品
-     *
+     * 包含文件上传
      * @param request
      * @param response
      * @throws ServletException
      * @throws IOException
      */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 接收所有参数并封装到map中
         Map<String, String> productMap = MyFileUploadUtils.parseRequest(request);
-//        String op = request.getParameter("op");
         String op = productMap.get("op");
         if (StringUtils.isEmpty(op)) {
             response.getWriter().println("<script>alert('op参数为空post！');</script>"); // 校验前端传输参数
@@ -50,12 +51,12 @@ public class ProductServlet extends HttpServlet {
             case "updateProduct":
                 updateProduct(request, response, productMap);
                 break;
-
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
     private void updateProduct(HttpServletRequest request, HttpServletResponse response, Map<String, String> productMap) throws IOException {
-//        System.out.println("oldProductMap = " + productMap);
         int pid = 0;
         try {
             pid = Integer.parseInt(productMap.get("id"));
@@ -64,23 +65,21 @@ public class ProductServlet extends HttpServlet {
             response.getWriter().println("<script>alert('pid参数类型错误！');</script>");
         }
         String imgUrl = productMap.get("imgUrl");
-        if(!StringUtils.isPicture(imgUrl)){ // 如果图片没做修改，则file标签为空，传过来一个随机url
+        // 如果图片没做修改，则file标签为空，会传过来一个随机url，此时不能修改imgUrl
+        if(!StringUtils.isPicture(imgUrl)){
             String oldImgUrl = productService.getProduct(pid).getImgUrl();
             productMap.put("imgUrl", oldImgUrl);
         }
 //        System.out.println("modifiedProductMap = " + productMap);
         // 否则，如果修改了图片，不对productMap做改动
-
         Product product = new Product();
         try {
             BeanUtils.populate(product, productMap);
-//            System.out.println("product = " + product);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-
         int updateResult = productService.updateProduct(product);
         switch (updateResult) {
             case 0:
@@ -91,6 +90,8 @@ public class ProductServlet extends HttpServlet {
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/productServlet?op=findPageProducts&num=" +
                         request.getSession().getAttribute("currentProductPageNum"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateResult);
         }
     }
 
@@ -121,16 +122,14 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op参数为空get！');</script>"); // 校验前端传输参数
+            response.getWriter().println("<script>alert('op参数为空get！');</script>");
             return;
         }
         switch (op) {
-            case "findAllCategories":
-                findAllCategories(request, response);
-                break;
             case "findPageProducts":
                 findPageProducts(request, response);
                 break;
@@ -146,6 +145,8 @@ public class ProductServlet extends HttpServlet {
             case "deleteMultiProducts":
                 deleteMultiProducts(request, response);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
@@ -176,6 +177,13 @@ public class ProductServlet extends HttpServlet {
                 request.getSession().getAttribute("currentProductPageNum"));
     }
 
+    /**
+     * 模糊查询
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException
+     */
     private void searchPageProducts(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         /*接收前端数据*/
 //        Map<String, String[]> parameterMap = request.getParameterMap(); // String[]无法用BeanUtils
@@ -203,10 +211,9 @@ public class ProductServlet extends HttpServlet {
         }
         product.setCid(cid);
         System.out.println("product = " + product);
-        request.setAttribute("searchProduct", product); // 把搜索条件存入request域
-        /*调用Service层*/
+        // 把搜索条件存入session域，下次打开时记住
+        request.getSession().setAttribute("searchProduct", product);
         Page currentPage = productService.listSearchedPageProducts(product, currentPageNum);
-        System.out.println(currentPage);
         if (currentPage == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
@@ -220,24 +227,6 @@ public class ProductServlet extends HttpServlet {
             request.getSession().setAttribute("currentProductPageNum", currentPage.getCurrentPageNum());
             // 转发
             request.getRequestDispatcher("/admin/product/searchedProductList.jsp").forward(request, response);
-        }
-    }
-
-    private void findAllCategories(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String jsp = request.getParameter("jsp");
-        List<Category> categoryList = categoryService.findAllCategory();
-        if (categoryList == null) {
-            response.getWriter().println("<script>alert('服务器开小差了！');</script>");
-            return;
-        } else if (categoryList != null && categoryList.size() == 0) {
-            response.getWriter().println("<script>alert('尚无分类！');</script>");
-            return;
-        } else if (categoryList != null && categoryList.size() != 0) {
-//            System.out.println("categoryList = " + categoryList);
-            request.setAttribute("categories", categoryList);
-            request.getRequestDispatcher("/admin/product/" + jsp + ".jsp").forward(request, response);
-//            Object contextCategories = getServletContext().getAttribute("categories");
-//            System.out.println("contextCategories = " + contextCategories);
         }
     }
 
@@ -271,7 +260,6 @@ public class ProductServlet extends HttpServlet {
             response.getWriter().println("<script>alert('num参数类型错误！');</script>");
         }
         Page currentPage = productService.listPageProducts(currentPageNum);
-//        System.out.println(currentPage);
         if (currentPage == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
@@ -296,7 +284,6 @@ public class ProductServlet extends HttpServlet {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-
         int addResult = productService.saveProduct(product);
         switch (addResult) {
             case 0:

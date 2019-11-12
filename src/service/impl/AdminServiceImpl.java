@@ -1,8 +1,9 @@
-package service;
+package service.impl;
 
 import bean.Admin;
 import dao.AdminDao;
-import dao.AdminDaoImpl;
+import dao.impl.AdminDaoImpl;
+import service.AdminService;
 
 import java.util.List;
 

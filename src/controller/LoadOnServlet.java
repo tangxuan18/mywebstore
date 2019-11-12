@@ -1,8 +1,8 @@
-package controller.admin;
+package controller;
 
 import bean.Category;
 import service.CategoryService;
-import service.CategoryServiceImpl;
+import service.impl.CategoryServiceImpl;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,7 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(value = "/loadOnServlet", loadOnStartup = -1)
+/**
+ * 加载分类
+ */
+@WebServlet(value = "/loadOnServlet", loadOnStartup = 0)
 public class LoadOnServlet extends HttpServlet {
 
     private CategoryService categoryService = new CategoryServiceImpl();
@@ -26,10 +29,12 @@ public class LoadOnServlet extends HttpServlet {
         System.out.println("categories = " + config.getServletContext().getAttribute("categories"));
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.doPost(request, response);
     }

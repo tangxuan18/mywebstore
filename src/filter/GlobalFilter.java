@@ -32,7 +32,6 @@ public class GlobalFilter implements Filter {
         if (!isStatic && !isPicture) {
             response.setContentType("text/html; charset=utf-8");
         }
-
         System.out.println("global filter:" + requestURI);
         chain.doFilter(req, resp);
     }

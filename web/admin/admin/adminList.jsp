@@ -52,7 +52,7 @@
 
 <body>
 <form action="${pageContext.request.contextPath }/admin/adminServlet" method="post">
-
+    <%--批量删除--%>
     <input type="hidden" name="operation" value="deleteMulti"/>
 
     <table width="100%" border="0" align="center" cellpadding="0"
