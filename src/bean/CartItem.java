@@ -6,12 +6,17 @@ public class CartItem {
 
     private int uid;
 
+    /**
+     * 商品对象
+     */
     private Product product;
 
+    /**
+     * 商品数量
+     */
     private int productCount;
 
 //    private Map<Product, Integer> cartItem;
-
 
     public int getCartItemId() {
         return cartItemId;

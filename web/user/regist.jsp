@@ -133,6 +133,7 @@
             return checkUsername() && checkPassword() && checkConfirmPassword() && checkNickname() && checkEmail() && checkBirthday();
         }
 
+        // ajax函数
         function checkUsernameByAjax() {
             var username = document.getElementById("username").value;
             /*创建核心对象*/
@@ -145,7 +146,7 @@
             /*建立连接*/
             // get方式
             <%--xmlHttpRequest.open("get", "${pageContext.request.contextPath}/ajaxServlet?username=" + username, true); // get方式--%>
-            // post方式
+            // post方式 请求ajaxServlet
             xmlHttpRequest.open("post", "${pageContext.request.contextPath}/ajaxServlet", true);
             xmlHttpRequest.setRequestHeader("content-type", "application/x-www-form-urlencoded");
             /*发送请求*/

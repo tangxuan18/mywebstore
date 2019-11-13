@@ -79,6 +79,7 @@ public class CartServlet extends HttpServlet {
 
     private void addToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User currentUser = (User) request.getSession().getAttribute("user"); //从session域获取User对象
+        // 如果没有完成邮箱验证，不允许购物
         if ("N".equals(currentUser.getActivationStatus())) {
             response.getWriter().println("<script>alert('请查收邮件并完成邮箱验证');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");

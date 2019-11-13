@@ -60,10 +60,7 @@ public class UserServlet extends HttpServlet {
         User user = new User();
         try {
             BeanUtils.populate(user, parameterMap);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            response.getWriter().println("<script>alert('参数封装失败！');</script>");
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             response.getWriter().println("<script>alert('参数封装失败！');</script>");
         }
@@ -72,8 +69,11 @@ public class UserServlet extends HttpServlet {
         /*发送验证邮件*/
         String activationCode = UUID.randomUUID().toString();
         user.setActivationCode(activationCode);
-        String activationMassage = "<a href='http://192.168.8.66/WebBookStore/userServlet?op=activateEmail&uuid=" + activationCode + "'>点我激活webStore账号</a>";
-        MailUtils.sendMail(user.getEmail(), activationMassage);
+        // 激活邮箱方法
+//        String activationMassage = "<a href='http://192.168.8.66/WebBookStore/userServlet?op=activateEmail&uuid=" + activationCode + "'>点我激活webStore账号</a>";
+        String serverIp = "127.0.0.1";
+        String activationMassageStr = "<a href='http://" + serverIp + request.getContextPath()+ "/userServlet?op=activateEmail&uuid=" + activationCode + "'>点我激活webStore账号</a>";
+        MailUtils.sendMail(user.getEmail(), activationMassageStr);
         int result = userService.register(user);
         switch (result) {
             case 0:
