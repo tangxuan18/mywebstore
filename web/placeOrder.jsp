@@ -36,8 +36,11 @@
 
 <body>
 <%--加载分类--%>
-<c:if test="${empty categories }">
+<%--<c:if test="${empty categories }">
     <jsp:forward page="/mainServlet?op=findAllCategories&jsp=placeOrder"></jsp:forward>
+</c:if>--%>
+<c:if test="${empty sessionScope.cart}">
+    <jsp:forward page="${pageContext.request.contextPath }/user/login.jsp"></jsp:forward>
 </c:if>
 <div id="templatemo_body_wrapper">
     <div id="templatemo_wrapper">

@@ -38,16 +38,23 @@ public class OrderServlet extends HttpServlet {
             return;
         }
         switch (op) {
+            // 确认订单
             case "placeOrder":
-                placeOrder(request, response); // 确认订单
+                placeOrder(request, response);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
+    /**
+     * 下单
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException
+     */
     private void placeOrder(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        /*接收前端参数*/
         String jsp = request.getParameter("orderJsp");
         String[] selectedCartItemIds = request.getParameterValues("ids");
         if (selectedCartItemIds == null) {
@@ -106,9 +113,7 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().println("<script>alert('尚无订单！');</script>");
             return;
         } else {
-//            request.getSession().setAttribute("orders", orderList);
             request.setAttribute("orders", orderList);
-//            request.getRequestDispatcher("/" + jsp + ".jsp").forward(request, response);
             request.getRequestDispatcher("/"+ jsp + ".jsp").forward(request, response);
         }
     }

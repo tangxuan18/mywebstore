@@ -68,6 +68,8 @@ public class CartServlet extends HttpServlet {
     }
 
     private void findCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 本来设置jsp这个参数就是为了能dispatcher到不同的页面
+        // placeOrder页面也可以通过查询
         String toJsp = request.getParameter("cartJsp");
         User user = (User) request.getSession().getAttribute("user");
         int uid = user.getUid();
@@ -78,8 +80,8 @@ public class CartServlet extends HttpServlet {
         }
         // 存入request域
         request.setAttribute("cart", cart);
-//        // 存入session
-//        request.getSession().setAttribute("cart", cart);
+//        // 存入session，给placeOrder页面从session获取Cart，并没有通过查询
+        request.getSession().setAttribute("cart", cart);
         request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
     }
 
