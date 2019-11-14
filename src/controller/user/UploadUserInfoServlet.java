@@ -65,7 +65,8 @@ public class UploadUserInfoServlet extends HttpServlet {
                 break;
             case 1:
                 response.getWriter().println("<script>alert('更改用户信息成功');</script>");
-                response.setHeader("refresh", "0, url = " + request.getContextPath() + "/index.jsp");
+                request.getSession().setAttribute("user", user);
+                response.setHeader("refresh", "0, url = " + request.getContextPath() + "/user/personal.jsp");
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + result);
