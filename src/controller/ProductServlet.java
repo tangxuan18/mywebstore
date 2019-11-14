@@ -37,11 +37,10 @@ public class ProductServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 接收所有参数并封装到map中
         Map<String, String> productMap = MyFileUploadUtils.parseRequest(request);
         String op = productMap.get("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op参数为空post！');</script>"); // 校验前端传输参数
+            response.getWriter().println("<script>alert('op参数为空post！');</script>");
             return;
         }
         switch (op) {
@@ -75,9 +74,7 @@ public class ProductServlet extends HttpServlet {
         Product product = new Product();
         try {
             BeanUtils.populate(product, productMap);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         int updateResult = productService.updateProduct(product);
@@ -103,7 +100,6 @@ public class ProductServlet extends HttpServlet {
             e.printStackTrace();
             response.getWriter().println("<script>alert('cid参数类型错误！');</script>");
         }
-
         Product product = productService.getProduct(pid);
 //        System.out.println("product = " + product);
         if (product == null) {
@@ -279,9 +275,7 @@ public class ProductServlet extends HttpServlet {
         Product product = new Product();
         try {
             BeanUtils.populate(product, productMap);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         int addResult = productService.saveProduct(product);
@@ -294,6 +288,8 @@ public class ProductServlet extends HttpServlet {
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/productServlet?op=findPageProducts&num=" +
                         request.getSession().getAttribute("currentProductPageNum"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + addResult);
         }
     }
 }

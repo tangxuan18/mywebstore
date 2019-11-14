@@ -35,82 +35,11 @@
 
 <body>
 <%--加载分类，由于--%>
-<c:if test="${empty categories }">
+<%--<c:if test="${empty categories }">
     <jsp:forward page="/mainServlet?op=findAllCategories&jsp=shoppingcart"></jsp:forward>
-</c:if>
+</c:if>--%>
 <div id="templatemo_body_wrapper">
     <div id="templatemo_wrapper">
-        <%--            <div id="templatemo_header">
-                        <div id="site_title"><h1><a href="http://localhost/${pageContext.request.contextPath }">Online Shoes
-                            Store</a></h1></div>
-                        <div id="header_right">
-                            <p>
-                                <c:if test="${!empty user }">
-                                    <a href="${pageContext.request.contextPath }/user/personal.jsp">我的个人中心</a> |
-                                </c:if>
-                                <a href="${pageContext.request.contextPath }/cartServlet?op=findCart&cartJsp=shoppingcart">购物车</a> |
-                                <c:if test="${empty user }">
-                                <a href="${pageContext.request.contextPath }/user/login.jsp">登录</a> |
-                                <a href="${pageContext.request.contextPath }/user/regist.jsp">注册</a></p>
-                            </c:if>
-                            <c:if test="${!empty user }">
-                                ${user.nickname }
-                                <a href="${pageContext.request.contextPath }/userServlet?op=logout">退出</a></p>
-                            </c:if>
-                        </div>
-                        <div class="cleaner"></div>
-                    </div> <!-- END of templatemo_header -->--%>
-
-        <%--<div id="templatemo_menubar">
-            <div id="top_nav" class="ddsmoothmenu">
-                <ul>
-                    <li><a href="${pageContext.request.contextPath }/index.jsp" class="selected">主页</a></li>
-                </ul>
-                <br style="clear: left"/>
-            </div> <!-- end of ddsmoothmenu -->
-            <div id="templatemo_search">
-                <form action="${pageContext.request.contextPath }/mainServlet" method="get">
-                    <input type="hidden" name="op" value="findProductsByKeyword"/>
-                    <input type="text" value="${keyword}" name="keyword" id="keyword" title="keyword"
-                           onfocus="clearText(this)" onblur="clearText(this)" class="txt_field"/>
-                    <input type="submit" name="Search" value=" " alt="Search" id="searchbutton" title="Search"
-                           class="sub_btn"/>
-                </form>
-            </div>
-        </div> <!-- END of templatemo_menubar -->
-        <div class="copyrights">Collect from <a href="#" title="Web商城">Web商城</a></div>
-
-        <div id="templatemo_main">
-            <div id="sidebar" class="float_l">
-                <div class="sidebar_box"><span class="bottom"></span>
-                    <h3>品牌</h3>
-                    <div class="content">
-                        <ul class="sidebar_list">
-                            <c:forEach items="${categories}" var="category" varStatus="vs">
-                                <c:if test="${vs.index !=0}">
-                                    <c:if test="${vs.index != fn:length(categories)-1 }">
-                                        <li>
-                                            <a href="${pageContext.request.contextPath }/mainServlet?op=findProductsByCid&cid=${category.id}&cname=${category.cname}">${category.cname}</a>
-                                        </li>
-                                    </c:if>
-                                </c:if>
-                                <c:if test="${vs.index==0 }">
-                                    <li class="first">
-                                        <a href="${pageContext.request.contextPath }/mainServlet?op=findProductsByCid&cid=${category.id}&cname=${category.cname}">${category.cname}</a>
-                                    </li>
-                                </c:if>
-                                <c:if test="${vs.index == fn:length(categories)-1 }">
-                                    <li class="last">
-                                        <a href="${pageContext.request.contextPath }/mainServlet?op=findProductsByCid&cid=${category.id}&cname=${category.cname}">${category.cname}</a>
-                                    </li>
-                                </c:if>
-                            </c:forEach>
-                        </ul>
-                    </div>
-                </div>
-            </div>--%>
-
-
         <div id="content" class="float_r">
             <h4><img src="${pageContext.request.contextPath }/images/cart.gif"/>购物车</h4>
             <form action="">
@@ -150,26 +79,6 @@
                             </td>
                             <td align="right">${item.product.webStorePrice } </td>
                             <td align="right">${item.product.webStorePrice*item.productCount } </td>
-                                <%--                                    <td align="center">
-                                                                        <a href="${pageContext.request.contextPath }/cartServlet?op=updateOneProductCount&uid=${user.uid}&itemId=${item.cartItemId}&addOrDelete=add">
-                                                                            <img src="images/add.gif" alt="add"/> <br/>
-                                                                            add
-                                                                        </a>
-                                                                    </td>
-                                                                    <td align="center">
-                                                                        <c:if test="${item.productCount != 1}">
-                                                                            <a href="${pageContext.request.contextPath }/cartServlet?op=updateOneProductCount&uid=${user.uid}&itemId=${item.cartItemId}&addOrDelete=delete">
-                                                                                <img src="images/remove_x.gif" alt="remove"/> <br/>
-                                                                                Remove
-                                                                            </a>
-                                                                        </c:if>
-                                                                        <c:if test="${item.productCount == 1}">
-                                                                            <a href="javascript:if(confirm('确实要删除吗?')) location='${pageContext.request.contextPath }/cartServlet?op=updateOneProductCount&uid=${user.uid}&itemId=${item.cartItemId}&addOrDelete=delete'">
-                                                                                <img src="images/remove_x.gif" alt="remove"/> <br/>
-                                                                                Remove
-                                                                            </a>
-                                                                        </c:if>
-                                                                    </td>--%>
                         </tr>
                         <c:set var="totalCount" value="${totalCount + item.productCount}"> </c:set>
                         <c:set var="sum" value="${sum + item.productCount*item.product.webStorePrice}"> </c:set>

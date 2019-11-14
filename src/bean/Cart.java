@@ -2,6 +2,9 @@ package bean;
 
 import java.util.List;
 
+/**
+ * 表中并没有cart表，只是对CartItem的封装
+ */
 public class Cart {
     /**
      * 包含多个cartItem

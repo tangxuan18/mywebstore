@@ -147,6 +147,7 @@
                     });
                 </script>
 
+                <%--显示热门商品并可以查看、加购物车--%>
                 <h3>热门商品</h3>
                 <c:forEach items="${hotProducts }" var="product" varStatus="vs">
                     <div class="${vs.index % 3 != 2?'product_box':'product_box no_margin_right' }">
@@ -175,7 +176,7 @@
         </div> <!-- END of templatemo_main -->
 
         <div id="templatemo_footer">
-            Copyright (c) 2016 <a href="#">Web商城</a> | <a href="#">Web工作室</a>
+            Copyright (c) 2016 <a href="#">webstore</a> | <a href="#">Shane</a>
         </div>
     </div>
 </div>
@@ -184,7 +185,7 @@
         alert("请先登录");
         window.location.href = "${pageContext.request.contextPath}/user/login.jsp";
     }
-
+    // 在主页加购物车默认加一件
     function addCart(pid, uid) {
         window.location.href = "${pageContext.request.contextPath}/cartServlet?op=addToCart&pid=" + pid + "&uid=" + uid + "&productCount=1";
     }

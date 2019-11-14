@@ -40,6 +40,8 @@ public class CartServlet extends HttpServlet {
             case "updateOneProductCount":
                 updateOneProductCount(request, response);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
@@ -56,14 +58,18 @@ public class CartServlet extends HttpServlet {
         switch (updateResult){
             case 0:
                 response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
             case 1:
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateResult);
         }
     }
 
     private void findCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String jsp = request.getParameter("cartJsp");
-        User user = (User) request.getSession().getAttribute("user"); //从session域获取User对象
+        String toJsp = request.getParameter("cartJsp");
+        User user = (User) request.getSession().getAttribute("user");
         int uid = user.getUid();
         Cart cart = cartService.getCart(uid);
         if (cart == null) {
@@ -72,13 +78,14 @@ public class CartServlet extends HttpServlet {
         }
         // 存入request域
         request.setAttribute("cart", cart);
-        // 存入session
-        request.getSession().setAttribute("cart", cart);
-        request.getRequestDispatcher("/" + jsp + ".jsp").forward(request, response);
+//        // 存入session
+//        request.getSession().setAttribute("cart", cart);
+        request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
     }
 
     private void addToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User currentUser = (User) request.getSession().getAttribute("user"); //从session域获取User对象
+        //从session域获取User对象
+        User currentUser = (User) request.getSession().getAttribute("user");
         // 如果没有完成邮箱验证，不允许购物
         if ("N".equals(currentUser.getActivationStatus())) {
             response.getWriter().println("<script>alert('请查收邮件并完成邮箱验证');</script>");
@@ -104,6 +111,8 @@ public class CartServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('添加到购物车成功！');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 }
