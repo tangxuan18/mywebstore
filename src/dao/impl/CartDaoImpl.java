@@ -44,7 +44,7 @@ public class CartDaoImpl implements CartDao {
     }
 
     @Override
-    public int insertOneProductCount(int cartItemId) {
+    public int plusOneProductCount(int cartItemId) {
         try {
             runner.update("update t_cartItem set productCount = productCount + 1 where cartItemId = ?", cartItemId);
         } catch (SQLException e) {
@@ -55,7 +55,7 @@ public class CartDaoImpl implements CartDao {
     }
 
     @Override
-    public int deleteOneProductCount(int cartItemId) {
+    public int minusOneProductCount(int cartItemId) {
         try {
             runner.update("update t_cartItem set productCount = productCount - 1 where cartItemId = ?", cartItemId);
         } catch (SQLException e) {
@@ -132,12 +132,24 @@ public class CartDaoImpl implements CartDao {
         return 1;
     }
 
+    /**
+     * 操作ResultSetHandler,因为要封装List<CartItem>对象，里面有Product对象，对象套对象
+     * @param uid
+     * @return
+     */
     @Override
     public Cart getCart(int uid) {
         Cart cart = new Cart();
         List<CartItem> cartItems = null;
         try {
+            // TO EX 多表联查并不需要外键
             cartItems = runner.query("select c.*, p.* from t_cartItem c inner join t_product p on c.pid = p.id where uid = ?", new ResultSetHandler<List<CartItem>>() {
+                /**
+                 *
+                 * @param resultSet
+                 * @return
+                 * @throws SQLException
+                 */
                 @Override
                 public List<CartItem> handle(ResultSet resultSet) throws SQLException {
                     List<CartItem> cartItems = new ArrayList<>();

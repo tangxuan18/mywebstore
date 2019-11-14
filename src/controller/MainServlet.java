@@ -81,12 +81,11 @@ public class MainServlet extends HttpServlet {
         String cname = request.getParameter("cname");
         int pid = 0;
         try {
-            pid = Integer.valueOf(request.getParameter("pid"));
+            pid = Integer.parseInt(request.getParameter("pid"));
         }catch (Exception e) {
             e.printStackTrace();
             response.getWriter().println("<script>alert('cid参数类型错误！');</script>");
         }
-
         Product product = productService.getProductByPid(pid);
         if (product == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");

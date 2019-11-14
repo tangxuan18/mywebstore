@@ -1,5 +1,8 @@
 package bean;
 
+/**
+ * 表中有cartItem表，保存id uid pid productCount
+ */
 public class CartItem {
 
     private int cartItemId;
