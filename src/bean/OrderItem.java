@@ -5,7 +5,9 @@ public class OrderItem {
     private int orderItemId;
 
     private int uid;
-
+    /**
+     * 不像CartItem那样保存Product对象，而是分别保存pid和productCount属性
+     */
     private int pid;
 
     private int productCount;

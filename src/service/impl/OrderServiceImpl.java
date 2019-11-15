@@ -18,6 +18,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductDao productDao = new ProductDaoImpl();
 
 
+    @Override
     public int deleteSelectedCartItems(int[] selectedCartItemIdArray) {
         StringBuffer paramSb = new StringBuffer("(");
         for (int id : selectedCartItemIdArray) {
@@ -31,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> placeOrder(Order order, int[] selectedCartItemIdArray, int uid) {
+    public List<Order> placeOrder(Order order, int[] selectedCartItemIdArray) {
         List<Order> orderList = null;
         /*（二）生成一个order*/
         int insertOrderResult = orderDao.insertOrder(order);
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
         /*（六）查询orderList*/
-        orderList = orderDao.listOrdersByUid(uid);
+        orderList = orderDao.listOrdersByUid(order.getUid());
         return orderList;
     }
 
@@ -142,6 +143,7 @@ public class OrderServiceImpl implements OrderService {
         return cartDao.listSelectedCartItems(sqlCartItem);
     }
 
+    @Override
     public int copyCartItemsToOrderItems(int[] selectedCartItemIdArray, Order order) {
         List<CartItem> selectedItems = listSelectedCartItems(selectedCartItemIdArray);
         /*保存到orderItem*/
@@ -170,6 +172,7 @@ public class OrderServiceImpl implements OrderService {
      * @param selectedCartItemIdArray
      * @return
      */
+    @Override
     public int subTotalStock(int[] selectedCartItemIdArray) {
         List<CartItem> selectedItems = listSelectedCartItems(selectedCartItemIdArray);
 /*        Connection connection = null;

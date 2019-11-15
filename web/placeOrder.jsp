@@ -120,12 +120,15 @@
             <div id="content" class="float_r">
                 <h3>确认订单</h3>
                 <form action="${pageContext.request.contextPath }/orderServlet" method="post">
-                    <input type="hidden" name="uid" value="${user.uid }">
-                    <input type="hidden" name="username" value="${user.username }">
+                    <%--跳转servlet和jsp--%>
                     <input type="hidden" name="op" value="placeOrder"/>
                     <input type="hidden" name="orderJsp" value="myOrders"/>
+                    <%--提交user信息--%>
+                    <input type="hidden" name="uid" value="${user.uid }">
+                    <input type="hidden" name="username" value="${user.username }">
                     <div>
                         <table style="width: 700px;border-style:1px solid " border="1">
+                            <%--提交收件人信息--%>
                             <tr>
                                 <td>收件人:</td>
                                 <td><input type="text" name="receiverName" value="${user.username }"
@@ -154,9 +157,11 @@
                                 <th>单价</th>
                                 <th>总价</th>
                             </tr>
+                            <%--前端计算totalCount和sum--%>
                             <c:set var="totalCount" value="0"> </c:set>
                             <c:set var="sum" value="0"> </c:set>
                             <c:forEach items="${cart.cartItems}" var="item">
+                                <%--提交购物信息--%>
                                 <tr id="tr${item.cartItemId}">
                                     <td><input type="checkbox" class="ids" name="ids" value="${item.cartItemId}"
                                                checked></td>
@@ -171,13 +176,12 @@
                             </c:forEach>
                         </table>
                     </div>
-
-                    <input type="hidden" id="qq" name="money" value="${sum}"/>
-<%--                    <h4>总金额:<span class="sumPrice"> ${sum}</span>元</h4>--%>
-                    <table style="width: 700px;border-style:1px solid " >
+                    <%--提交总金额，必须在计算之后提交--%>
+                    <input type="hidden" id="qq" name="totalPrice" value="${sum}"/>
+                    <table style="width: 700px;border-style:1px solid ">
                         <tr>
-                            <td>总件数:<span class="sumPrice"> ${totalCount}</span>件</td>
-                            <td>总金额:<span class="sumPrice"> ${sum}</span>元</td>
+                            <td><h4>总件数:<span class="sumPrice"> ${totalCount}</span>件</h4></td>
+                            <td><h4>总金额:<span class="sumPrice"> ${sum}</span>元</h4></td>
                         </tr>
                     </table>
                     <input type="submit" value="去下单" style="font-size: 18px;" align="right">

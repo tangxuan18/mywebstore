@@ -26,5 +26,5 @@ public interface OrderService {
 
     int deleteSelectedCartItems(int[] selectedCartItemIdArray);
 
-    List<Order> placeOrder(Order order, int[] selectedCartItemIdArray, int uid);
+    List<Order> placeOrder(Order order, int[] selectedCartItemIdArray);
 }
