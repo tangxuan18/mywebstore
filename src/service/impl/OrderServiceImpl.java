@@ -6,9 +6,16 @@ import dao.impl.CartDaoImpl;
 import dao.impl.OrderDaoImpl;
 import dao.impl.ProductDaoImpl;
 import service.OrderService;
+import utils.DruidUtils;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.List;
 
+/**
+ * @author GFS
+ */
 public class OrderServiceImpl implements OrderService {
 
     private OrderDao orderDao = new OrderDaoImpl();
@@ -25,39 +32,75 @@ public class OrderServiceImpl implements OrderService {
             paramSb.append(id).append(",");
         }
         String substring = paramSb.substring(0, paramSb.length() - 1);
-        String params = substring + ")";
-        String sql = "delete from t_cartItem where cartItemId in " + params;
-        int result = orderDao.deleteSelectedCartItems(sql);
-        return result;
+        String paramsStr = substring + ")";
+        String sql = "delete from t_cartItem where cartItemId in " + paramsStr;
+        return orderDao.deleteSelectedCartItems(sql);
     }
 
+    /**
+     * 下单操作，分成几个子操作，放在service层
+     *
+     * @param order
+     * @param selectedCartItemIdArray
+     * @return
+     */
     @Override
-    public List<Order> placeOrder(Order order, int[] selectedCartItemIdArray) {
-        List<Order> orderList = null;
-        /*（二）生成一个order*/
-        int insertOrderResult = orderDao.insertOrder(order);
-        if(insertOrderResult == 0){
-            return null;
+    public List<Order> placeOrder(Order order, int[] selectedCartItemIdArray) throws Exception {
+        Connection connection = null;
+        Savepoint savePointWholeProcess = null;
+        try {
+            // 单线程Connection，引入事务
+            connection = DruidUtils.getConnection(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        //（二、三）的顺序不能颠倒，因为orderItem依赖order，必须先存在orderNum
-        /*（三）把cartItems拷贝到orderItems*/
-        int copyResult = this.copyCartItemsToOrderItems(selectedCartItemIdArray, order);
-        if(copyResult == 0){
-            return null;
+        try {
+            // 设置mysql不自动提交
+            connection.setAutoCommit(false);
+            // 保存回滚点
+            savePointWholeProcess = connection.setSavepoint();
+            // 2 生成一个order
+            int insertOrderResult = orderDao.insertOrder(order);
+            if (insertOrderResult == 0) {
+                System.out.println("添加Order异常");
+                throw new Exception("添加Order异常");
+            }
+            // 3 把cartItems拷贝到orderItems
+            int copyResult = this.copyCartItemsToOrderItems(selectedCartItemIdArray, order);
+            if (copyResult == 0) {
+                System.out.println("添加OrderItem异常");
+                throw new Exception("添加OrderItem异常");
+            }
+            // 4 更改totalStockCount
+            int updateResult = this.minusTotalStock(selectedCartItemIdArray);
+            if (updateResult == 0) {
+                System.out.println("更新库存异常");
+                throw new Exception("更新库存异常");
+            }
+            // 5 删除勾选的selectedCartItems
+            int deleteResult = this.deleteSelectedCartItems(selectedCartItemIdArray);
+            if (deleteResult == 0) {
+                System.out.println("清空购物车异常");
+                throw new Exception("清空购物车异常");
+            }
+            // 如果无异常，正常commit()
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                connection.rollback(savePointWholeProcess);
+                System.out.println("JDBC Transaction rolled back to savepoint successfully");
+                // 最后提交commit()
+                connection.commit();
+                throw new Exception("事务回滚，提示用户");
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+                System.out.println("JDBC Transaction failed to roll back to savepoint");
+            }
         }
-        /*（四）更改totalStockCount*/
-        int updateResult = this.subTotalStock(selectedCartItemIdArray);
-        if(updateResult == 0){
-            return null;
-        }
-        /*（五）删除指定cartItems*/
-        int deleteResult = this.deleteSelectedCartItems(selectedCartItemIdArray);
-        if(deleteResult == 0){
-            return null;
-        }
-        /*（六）查询orderList*/
-        orderList = orderDao.listOrdersByUid(order.getUid());
-        return orderList;
+        // 6 查询orderList
+        return orderDao.listOrdersByUid(order.getUid());
+
     }
 
     @Override
@@ -88,30 +131,26 @@ public class OrderServiceImpl implements OrderService {
         int payStatus = order.getPayStatus();
         /*（一）查询orderItems*/
         List<OrderItem> orderItemList = orderDao.listCancellingOrderItems(orderId);
-        if(orderItemList == null){
+        if (orderItemList == null) {
             return 0;
         }
         /*（二）修改totalStock*/
         int addResult = this.addTotalStock(orderItemList);
-        if(addResult == 0){
+        if (addResult == 0) {
             return addResult;
         }
         /*（三）修改order的payStatus*/
         int updateResult = orderDao.updatePayStatus(orderId, payStatus);
-        if(updateResult == 0){
+        if (updateResult == 0) {
             return updateResult;
         }
         return 1;
     }
 
     private int addTotalStock(List<OrderItem> orderItemList) {
-        String sqlAddTotalStock;
         for (OrderItem orderItem : orderItemList) {
-            int orderItemId = orderItem.getOrderItemId();
-            int productCount = orderItem.getProductCount();
-            sqlAddTotalStock = "update t_product p inner join t_orderItem o on o.pid = p.id set totalStockCount = totalStockCount + " + productCount +  " where orderItemId = " + orderItemId;
-            int result = productDao.updateTotalStock(sqlAddTotalStock);
-            if(result == 0){
+            int result = productDao.updateTotalStockForCancelOrder(orderItem);
+            if (result == 0) {
                 return result;
             }
         }
@@ -122,9 +161,12 @@ public class OrderServiceImpl implements OrderService {
     public int confirmStock(int[] selectedCartItemIdArray) {
         List<CartItem> selectedCartItemList = listSelectedCartItems(selectedCartItemIdArray);
         for (CartItem cartItem : selectedCartItemList) {
+            // 根据cartItem查出需要的pcount
             int productCount = cartItem.getProductCount();
+            // 根据pid查出实际库存
             int pid = cartItem.getProduct().getId();
             int totalStockCount = productDao.getProductByPid(pid).getTotalStockCount();
+            // 如果库存<需求
             if (totalStockCount < productCount) {
                 return 0;
             }
@@ -145,15 +187,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public int copyCartItemsToOrderItems(int[] selectedCartItemIdArray, Order order) {
-        List<CartItem> selectedItems = listSelectedCartItems(selectedCartItemIdArray);
-        /*保存到orderItem*/
+        // 根据selectedCartItemIdArray查询selectedCartItems
+        List<CartItem> selectedCartItems = listSelectedCartItems(selectedCartItemIdArray);
+        /*抽取部分信息保存到orderItem*/
         OrderItem orderItem = new OrderItem();
-        for (CartItem selectedItem : selectedItems) {
-            orderItem.setUid(selectedItem.getUid());
-            orderItem.setPid(selectedItem.getProduct().getId());
-            orderItem.setProductCount(selectedItem.getProductCount());
+        // 遍历cartItems，把信息封装到orderItem
+        for (CartItem selectedCartItem : selectedCartItems) {
+            orderItem.setUid(selectedCartItem.getUid());
+            orderItem.setPid(selectedCartItem.getProduct().getId());
+            orderItem.setProductCount(selectedCartItem.getProductCount());
             orderItem.setOrderNum(order.getOrderNum());
-            int result = orderDao.insertSelectedItems(orderItem); // 调用orderDao
+            // 调用dao层
+            int result = orderDao.insertOrderItem(orderItem);
             if (result == 0) {
                 return result;
             }
@@ -161,67 +206,31 @@ public class OrderServiceImpl implements OrderService {
         return 1;
     }
 
-    @Override
-    public int insertOrder(Order order) {
-        return orderDao.insertOrder(order);
-    }
 
-    /**
-     * 下单后更改库存，引入事务
-     *
-     * @param selectedCartItemIdArray
-     * @return
-     */
-    @Override
-    public int subTotalStock(int[] selectedCartItemIdArray) {
-        List<CartItem> selectedItems = listSelectedCartItems(selectedCartItemIdArray);
-/*        Connection connection = null;
-        Savepoint savepoint = null;
+    private int minusTotalStock(int[] selectedCartItemIdArray) {
+        Connection connection = null;
         try {
+            // 单线程Connection，引入事务
             connection = DruidUtils.getConnection(true);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         try {
+            // 设置mysql不自动提交
             connection.setAutoCommit(false);
-            String sqlStock;
+            List<CartItem> selectedItems = listSelectedCartItems(selectedCartItemIdArray);
             for (CartItem cartItem : selectedItems) {
-                int productCount = cartItem.getProductCount();
-                int cartItemId = cartItem.getCartItemId();
-                sqlStock = "update t_product p inner join t_cartItem c on c.pid = p.id set p.totalStockCount = p.totalStockCount - " + productCount + " where cartItemId = " + cartItemId;
-                int updateResult = productDao.subTotalStock(sqlStock); // 调用productDao
+                // 调用productDao
+                int updateResult = productDao.updateTotalStockForPlaceOrder(cartItem);
                 if (updateResult == 0) {
                     return updateResult;
+                }else {
+                    connection.commit();
                 }
-                savepoint = connection.setSavepoint();
             }
-            connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
-            try {
-                if (savepoint == null) {
-                    connection.rollback();
-                    return 0;
-                } else {
-                    connection.rollback(savepoint);
-                    connection.commit();
-                    return 1;
-                }
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }*/
-        String sqlStock;
-        for (CartItem cartItem : selectedItems) {
-            int productCount = cartItem.getProductCount();
-            int cartItemId = cartItem.getCartItemId();
-            sqlStock = "update t_product p inner join t_cartItem c on c.pid = p.id set p.totalStockCount = p.totalStockCount - " + productCount + " where cartItemId = " + cartItemId;
-            int updateResult = productDao.updateTotalStock(sqlStock); // 调用productDao
-            if (updateResult == 0) {
-                return updateResult;
-            }
         }
         return 1;
     }
-
 }

@@ -3,12 +3,13 @@ package dao;
 import bean.Order;
 import bean.OrderItem;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface OrderDao {
     int insertOrder(Order order);
 
-    int insertSelectedItems(OrderItem orderItem);
+    int insertOrderItem(OrderItem orderItem);
 
     List<Order> listOrdersByUid(int uid);
 

@@ -15,6 +15,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author GFS
+ */
 public class CartDaoImpl implements CartDao {
 
     private QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());

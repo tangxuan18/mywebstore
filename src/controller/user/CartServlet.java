@@ -27,7 +27,7 @@ public class CartServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if(StringUtils.isEmpty(op)){
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         switch (op){
@@ -52,12 +52,12 @@ public class CartServlet extends HttpServlet {
             cartItemId = Integer.parseInt(request.getParameter("itemId"));
         }catch (Exception e){
             e.printStackTrace();
-            response.getWriter().println("<script>alert('cartItemId²ÎÊı¸ñÊ½´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('cartItemIdå‚æ•°æ ¼å¼é”™è¯¯ï¼');</script>");
         }
         int updateResult = cartService.updateOneProductCount(cartItemId, addOrDelete);
         switch (updateResult){
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
@@ -68,29 +68,29 @@ public class CartServlet extends HttpServlet {
     }
 
     private void findCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // ±¾À´ÉèÖÃjspÕâ¸ö²ÎÊı¾ÍÊÇÎªÁËÄÜdispatcherµ½²»Í¬µÄÒ³Ãæ
-        // placeOrderÒ³ÃæÒ²¿ÉÒÔÍ¨¹ı²éÑ¯
+        // æœ¬æ¥è®¾ç½®jspè¿™ä¸ªå‚æ•°å°±æ˜¯ä¸ºäº†èƒ½dispatcheråˆ°ä¸åŒçš„é¡µé¢
+        // placeOrderé¡µé¢ä¹Ÿå¯ä»¥é€šè¿‡æŸ¥è¯¢
         String toJsp = request.getParameter("cartJsp");
         User user = (User) request.getSession().getAttribute("user");
         int uid = user.getUid();
         Cart cart = cartService.getCart(uid);
         if (cart == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         }
-        // ´æÈërequestÓò
+        // å­˜å…¥requeståŸŸ
         request.setAttribute("cart", cart);
-//        // ´æÈësession£¬¸øplaceOrderÒ³Ãæ´Ósession»ñÈ¡Cart£¬²¢Ã»ÓĞÍ¨¹ı²éÑ¯
+//        // å­˜å…¥sessionï¼Œç»™placeOrderé¡µé¢ä»sessionè·å–Cartï¼Œå¹¶æ²¡æœ‰é€šè¿‡æŸ¥è¯¢
         request.getSession().setAttribute("cart", cart);
         request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
     }
 
     private void addToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //´ÓsessionÓò»ñÈ¡User¶ÔÏó
+        //ä»sessionåŸŸè·å–Userå¯¹è±¡
         User currentUser = (User) request.getSession().getAttribute("user");
-        // Èç¹ûÃ»ÓĞÍê³ÉÓÊÏäÑéÖ¤£¬²»ÔÊĞí¹ºÎï
+        // å¦‚æœæ²¡æœ‰å®Œæˆé‚®ç®±éªŒè¯ï¼Œä¸å…è®¸è´­ç‰©
         if ("N".equals(currentUser.getActivationStatus())) {
-            response.getWriter().println("<script>alert('Çë²éÊÕÓÊ¼ş²¢Íê³ÉÓÊÏäÑéÖ¤');</script>");
+            response.getWriter().println("<script>alert('è¯·æŸ¥æ”¶é‚®ä»¶å¹¶å®Œæˆé‚®ç®±éªŒè¯');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         }
@@ -102,15 +102,15 @@ public class CartServlet extends HttpServlet {
             productCount = Integer.parseInt(request.getParameter("productCount"));
         }catch (Exception e){
             e.printStackTrace();
-            response.getWriter().println("<script>alert('pid/productCount²ÎÊıÀàĞÍ´íÎó');</script>");
+            response.getWriter().println("<script>alert('pid/productCountå‚æ•°ç±»å‹é”™è¯¯');</script>");
         }
         int result = cartService.saveCartItem(uid, pid, productCount);
         switch (result){
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('Ìí¼Óµ½¹ºÎï³µ³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('æ·»åŠ åˆ°è´­ç‰©è½¦æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
                 break;
             default:

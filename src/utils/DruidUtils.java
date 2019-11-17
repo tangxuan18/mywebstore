@@ -20,18 +20,20 @@ public class DruidUtils {
     /**
      *  定义成员变量 DataSource
      */
-    private static DataSource ds ;
+    private static DataSource dataSource;
 
     private static ThreadLocal<Connection> threadLocal = new ThreadLocal<>();
 
+    /**
+     * 静态代码块初始化datasource
+     */
     static{
         try {
-            //1.加载配置文件
             Properties pro = new Properties();
-            // 使用getClassLoader()加载配置文件
+            // 1 使用getClassLoader()加载druid.properties配置文件
             pro.load(DruidUtils.class.getClassLoader().getResourceAsStream("druid.properties"));
-            //2.初始化DataSource
-            ds = DruidDataSourceFactory.createDataSource(pro);
+            // 2 初始化DataSource
+            dataSource = DruidDataSourceFactory.createDataSource(pro);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -43,17 +45,18 @@ public class DruidUtils {
      * 获取连接池方法
      */
     public static DataSource getDataSource(){
-        return  ds;
+        return dataSource;
     }
 
     /**
      * 获取连接
      */
     public static Connection getConnection() throws SQLException {
-        return ds.getConnection();
+        return dataSource.getConnection();
     }
 
     /**
+     * 开启事务用的getConnection
      * @param flag 表示是否开启事务
      *
      * */
@@ -61,12 +64,13 @@ public class DruidUtils {
         if(flag){
             Connection connection = threadLocal.get();
             if(connection == null){
-                connection = ds.getConnection();
+                connection = dataSource.getConnection();
                 threadLocal.set(connection);
             }
             return connection;
+        }else {
+            return dataSource.getConnection();
         }
-        return ds.getConnection();
     }
 
     /**

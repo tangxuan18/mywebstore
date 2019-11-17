@@ -20,11 +20,7 @@ public interface OrderService {
 
     int copyCartItemsToOrderItems(int[] selectedCartItemIdArray, Order order);
 
-    int insertOrder(Order order);
-
-    int subTotalStock(int[] selectedCartItemIdArray);
-
     int deleteSelectedCartItems(int[] selectedCartItemIdArray);
 
-    List<Order> placeOrder(Order order, int[] selectedCartItemIdArray);
+    List<Order> placeOrder(Order order, int[] selectedCartItemIdArray) throws Exception;
 }

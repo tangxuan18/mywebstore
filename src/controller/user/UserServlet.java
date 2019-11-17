@@ -32,7 +32,7 @@ public class UserServlet extends HttpServlet {
 //        String op = map.get("op");
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         switch (op) {
@@ -62,25 +62,25 @@ public class UserServlet extends HttpServlet {
             BeanUtils.populate(user, parameterMap);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('²ÎÊı·â×°Ê§°Ü£¡');</script>");
+            response.getWriter().println("<script>alert('å‚æ•°å°è£…å¤±è´¥ï¼');</script>");
         }
         user.setRegistTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         user.setActivationStatus("N");
-        /*·¢ËÍÑéÖ¤ÓÊ¼ş*/
+        /*å‘é€éªŒè¯é‚®ä»¶*/
         String activationCode = UUID.randomUUID().toString();
         user.setActivationCode(activationCode);
-        // ¼¤»îÓÊÏä·½·¨
-//        String activationMassage = "<a href='http://192.168.8.66/WebBookStore/userServlet?op=activateEmail&uuid=" + activationCode + "'>µãÎÒ¼¤»îwebStoreÕËºÅ</a>";
+        // æ¿€æ´»é‚®ç®±æ–¹æ³•
+//        String activationMassage = "<a href='http://192.168.8.66/WebBookStore/userServlet?op=activateEmail&uuid=" + activationCode + "'>ç‚¹æˆ‘æ¿€æ´»webStoreè´¦å·</a>";
         String serverIp = "127.0.0.1";
-        String activationMassageStr = "<a href='http://" + serverIp + request.getContextPath()+ "/userServlet?op=activateEmail&uuid=" + activationCode + "'>µãÎÒ¼¤»îwebStoreÕËºÅ</a>";
+        String activationMassageStr = "<a href='http://" + serverIp + request.getContextPath()+ "/userServlet?op=activateEmail&uuid=" + activationCode + "'>ç‚¹æˆ‘æ¿€æ´»webStoreè´¦å·</a>";
         MailUtils.sendMail(user.getEmail(), activationMassageStr);
         int result = userService.register(user);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('×¢²á³É¹¦£¬Çë¼ÌĞøÑéÖ¤ÓÊÏä£¡');</script>");
+                response.getWriter().println("<script>alert('æ³¨å†ŒæˆåŠŸï¼Œè¯·ç»§ç»­éªŒè¯é‚®ç®±ï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
                 break;
             default:
@@ -89,22 +89,22 @@ public class UserServlet extends HttpServlet {
     }
 
     private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        System.out.println(request.getSession().getAttribute("user") + "°²È«ÍË³ö£¡");
+//        System.out.println(request.getSession().getAttribute("user") + "å®‰å…¨é€€å‡ºï¼");
 /*        if(request.getSession().getAttribute("user") == null){
-            response.getWriter().println("<script>alert('ÕËºÅ¹ıÆÚ£¬ÇëÖØĞÂµÇÂ¼£¡');</script>");
+            response.getWriter().println("<script>alert('è´¦å·è¿‡æœŸï¼Œè¯·é‡æ–°ç™»å½•ï¼');</script>");
             return;
         }*/
         request.getSession().removeAttribute("user");
-        response.getWriter().println("<script>alert('°²È«ÍË³ö³É¹¦£¡');</script>");
+        response.getWriter().println("<script>alert('å®‰å…¨é€€å‡ºæˆåŠŸï¼');</script>");
         response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        /*¼ì²éÑéÖ¤Âë*/
+        /*æ£€æŸ¥éªŒè¯ç */
         String checkcodeSession = (String) request.getSession().getAttribute("checkcode_session");
         String verifyCode = request.getParameter("verifyCode");
         if (!checkcodeSession.equals(verifyCode)) {
-            response.getWriter().println("<script>alert('ÑéÖ¤Âë´íÎó');</script>");
+            response.getWriter().println("<script>alert('éªŒè¯ç é”™è¯¯');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/user/login.jsp");
             return;
         }
@@ -115,42 +115,37 @@ public class UserServlet extends HttpServlet {
         user.setPassword(password);
         User currentUser = userService.getLoginUser(user);
         if (currentUser == null) {
-            response.getWriter().println("<script>alert('ÓÃ»§Ãû»òÃÜÂë´íÎó');</script>");
+            response.getWriter().println("<script>alert('ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         } else {
             System.out.println("currentUser = " + currentUser);
-            // currentUser´æÈësessionÓò
+            // currentUserå­˜å…¥sessionåŸŸ
             request.getSession().setAttribute("user", currentUser);
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
         }
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-/*        String username = request.getParameter("username");
-        String nickname = request.getParameter("nickname");
-        String password = request.getParameter("password");
-        String email = request.getParameter("email");
-        String birthday = request.getParameter("birthday");*/
         Map<String, String[]> parameterMap = request.getParameterMap();
         User user = new User();
         try {
             BeanUtils.populate(user, parameterMap);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('BeanUtils²ÎÊı·â×°Ê§°Ü£¡');</script>");
+            response.getWriter().println("<script>alert('BeanUtilså‚æ•°å°è£…å¤±è´¥ï¼');</script>");
         }
         user.setRegistTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        user.setActivationCode("vipºóÌ¨×¢²á");
-        // ÃâÓÊÏä×¢²á
+        user.setActivationCode("vipåå°æ³¨å†Œ");
+        // å…é‚®ç®±æ³¨å†Œ
         user.setActivationStatus("Y");
         int result = userService.addUserBackground(user);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('ºóÌ¨Ìí¼ÓÆÕÍ¨ÓÃ»§³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('åå°æ·»åŠ æ™®é€šç”¨æˆ·æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "userServlet?op=findPageUsers&num=1");
                 break;
             default:
@@ -162,7 +157,7 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         switch (op) {
@@ -186,19 +181,19 @@ public class UserServlet extends HttpServlet {
             currentPageNum = Integer.parseInt(request.getParameter("num"));
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('num²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('numå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         Page currentPage = userService.listPageUsers(currentPageNum);
 //        System.out.println(currentPage);
         if (currentPage == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() == 0) {
-            response.getWriter().println("<script>alert('¸ÃÒ³ÉĞÎŞÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('è¯¥é¡µå°šæ— å•†å“ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
             request.setAttribute("page", currentPage);
-            // °Ñµ±Ç°Ò³Âë ´æÈësession
+            // æŠŠå½“å‰é¡µç  å­˜å…¥session
             request.getSession().setAttribute("currentProductPageNum", currentPage.getCurrentPageNum());
             request.getRequestDispatcher("/admin/user/userList.jsp").forward(request, response);
         }
@@ -207,19 +202,19 @@ public class UserServlet extends HttpServlet {
     private void activateEmail(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String activationCode = request.getParameter("uuid");
         if (StringUtils.isEmpty(activationCode)) {
-            response.getWriter().println("<script>alert('uuid²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('uuidå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         User user = userService.getUserByActivationCode(activationCode);
         if (user == null) {
-            response.getWriter().println("<script>alert('ÓÊÏäÑéÖ¤Âë´íÎó');</script>");
+            response.getWriter().println("<script>alert('é‚®ç®±éªŒè¯ç é”™è¯¯');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         }
         int result = userService.updateActivationStatus(user);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('¸ü¸Ä¼¤»î×´Ì¬Ê§°Ü');</script>");
+                response.getWriter().println("<script>alert('æ›´æ”¹æ¿€æ´»çŠ¶æ€å¤±è´¥');</script>");
                 break;
             case 1:
                 response.sendRedirect(request.getContextPath() + "/user/activateEmailSuccess.jsp");

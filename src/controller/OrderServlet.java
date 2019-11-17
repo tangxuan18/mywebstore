@@ -80,34 +80,40 @@ public class OrderServlet extends HttpServlet {
         }
         // 封装Order
         Order order = new Order();
-        String orderNum = UUID.randomUUID().toString();
-        String orderTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        int payStatus = 1;
         try {
             BeanUtils.populate(order, parameterMap);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         // Order补上下单时生成的属性
-        order.setOrderNum(orderNum);
-        order.setPayStatus(payStatus);
-        order.setOrderTime(orderTime);
-        order.setOrderNum(orderNum);
-        // 下面正式进入下单操作
-        /*（一）验证库存*/
+        order.setOrderNum(UUID.randomUUID().toString());
+        order.setPayStatus(1);
+        order.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        // 1 验证库存
         int confirmStockResult = orderService.confirmStock(selectedCartItemIdArray);
         if (confirmStockResult == 0) {
-            response.getWriter().println("<script>alert('库存不足！');</script>");
+            response.getWriter().println("<script>alert('十分抱歉！库存不足！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         }
-        /*（六）查询orderList*/
-        List<Order> orderList = orderService.placeOrder(order, selectedCartItemIdArray);
+        // 下面正式进入下单操作
+        List<Order> orderList = null;
+        // 如果下单异常，需要提示用户
+        try {
+            orderList = orderService.placeOrder(order, selectedCartItemIdArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('服务器开小差了！您没有下单成功');</script>");
+            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
+            return;
+        }
         if (orderList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         } else if (orderList.size() == 0) {
             response.getWriter().println("<script>alert('尚无订单！');</script>");
+            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         } else {
             request.setAttribute("orders", orderList);
@@ -164,6 +170,9 @@ public class OrderServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             case 1:
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findUserOrders");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 

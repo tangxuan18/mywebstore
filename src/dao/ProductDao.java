@@ -1,5 +1,7 @@
 package dao;
 
+import bean.CartItem;
+import bean.OrderItem;
 import bean.Product;
 
 import java.util.List;
@@ -31,5 +33,7 @@ public interface ProductDao {
 
     List<Product> listProductsByKeyword(String keyword);
 
-    int updateTotalStock(String sql);
+    int updateTotalStockForPlaceOrder(CartItem cartItem);
+
+    int updateTotalStockForCancelOrder(OrderItem orderItem);
 }

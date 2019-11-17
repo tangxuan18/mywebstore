@@ -12,6 +12,9 @@ import utils.DruidUtils;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * @author GFS
+ */
 public class OrderDaoImpl implements OrderDao {
 
     private QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -19,11 +22,13 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public int insertOrder(Order order) {
         try {
-            runner.update("insert into t_order values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            QueryRunner runnerSameConnection = new QueryRunner();
+//            int i = 1 / 0;
+            runnerSameConnection.update(DruidUtils.getConnection(true),"insert into t_order values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     order.getOrderNum(), order.getTotalPrice(), order.getReceiverName(), order.getReceiverMobile(),
                     order.getReceiverAddress(), order.getPayStatus(), order.getOrderTime(),
                     order.getUid(), order.getUsername());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -31,11 +36,13 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public int insertSelectedItems(OrderItem orderItem) {
+    public int insertOrderItem(OrderItem orderItem) {
+        QueryRunner runnerSameConnection = new QueryRunner();
         try {
-            runner.update("insert into t_orderItem values (null, ?, ?, ?, ?)",
+//            int i = 1 / 0;
+            runnerSameConnection.update(DruidUtils.getConnection(true),"insert into t_orderItem values (null, ?, ?, ?, ?)",
                     orderItem.getUid(), orderItem.getPid(), orderItem.getProductCount(), orderItem.getOrderNum());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -89,9 +96,11 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public int deleteSelectedCartItems(String sql) {
+        QueryRunner runnerSameConnection = new QueryRunner();
         try {
-            runner.update(sql);
-        } catch (SQLException e) {
+//            int i = 1 / 0;
+            runnerSameConnection.update(DruidUtils.getConnection(true), sql);
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }

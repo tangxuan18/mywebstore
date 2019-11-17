@@ -1,5 +1,7 @@
 package dao.impl;
 
+import bean.CartItem;
+import bean.OrderItem;
 import bean.Page;
 import bean.Product;
 import dao.ProductDao;
@@ -132,10 +134,28 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public int updateTotalStock(String sql) {
+    public int updateTotalStockForPlaceOrder(CartItem cartItem) {
+        QueryRunner runnerSameConnection = new QueryRunner();
         try {
-            runner.update(sql);
-        } catch (SQLException e) {
+//            int i = 1 / 0;
+            runnerSameConnection.update(DruidUtils.getConnection(true),
+                    "update t_product p inner join t_cartItem c on c.pid = p.id " +
+                            "set p.totalStockCount = p.totalStockCount - ? where cartItemId = ?",
+                    cartItem.getProductCount(), cartItem.getCartItemId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return 1;
+    }
+
+    @Override
+    public int updateTotalStockForCancelOrder(OrderItem orderItem) {
+        try {
+            runner.update("update t_product p inner join t_orderItem o on o.pid = p.id " +
+                            "set p.totalStockCount = p.totalStockCount + ? where orderItemId = ?",
+                    orderItem.getProductCount(), orderItem.getOrderItemId());
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -144,9 +164,9 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public int countTotalProductCount() {
-        Long totalCount = 0L; //Long型后加大L
+        Long totalCount = 0L;
         try {
-            totalCount = (Long) runner.query("select count(id) from t_product", new ScalarHandler()); // 返回Long类型
+            totalCount = (Long) runner.query("select count(id) from t_product", new ScalarHandler());
         } catch (SQLException e) {
             e.printStackTrace();
         }
