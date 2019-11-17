@@ -23,8 +23,8 @@ public class CategoryServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String operation = request.getParameter("operation");
         if (operation == null) {
-            // Ğ£ÑéÇ°¶Ë´«Êä²ÎÊı
-            response.getWriter().println("<script>alert('operation²ÎÊı¸ñÊ½´íÎó£¡');</script>");
+            // æ ¡éªŒå‰ç«¯ä¼ è¾“å‚æ•°
+            response.getWriter().println("<script>alert('operationå‚æ•°æ ¼å¼é”™è¯¯ï¼');</script>");
             return;
         }
         switch (operation) {
@@ -57,35 +57,35 @@ public class CategoryServlet extends HttpServlet {
         try {
             currentPageNum = Integer.parseInt(request.getParameter("num"));
             if (currentPageNum < 1) {
-                response.getWriter().println("<script>alert('ÒÑ¾­ÊÇµÚÒ»Ò³£¡');</script>");
+                response.getWriter().println("<script>alert('å·²ç»æ˜¯ç¬¬ä¸€é¡µï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 return;
             }
             int totalPageNum = (int) request.getServletContext().getAttribute("totalPageNum");
             if (currentPageNum > totalPageNum) {
-                response.getWriter().println("<script>alert('ÒÑ¾­ÊÇ×îºóÒ»Ò³£¡');</script>");
+                response.getWriter().println("<script>alert('å·²ç»æ˜¯æœ€åä¸€é¡µï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('²ÎÊı¸ñÊ½´íÎó£¡');</script>"); // Ğ£ÑéÇ°¶Ë´«Êä²ÎÊı
+            response.getWriter().println("<script>alert('å‚æ•°æ ¼å¼é”™è¯¯ï¼');</script>"); // æ ¡éªŒå‰ç«¯ä¼ è¾“å‚æ•°
         }
-        // Èç¹ûÃ»ÓĞ·ÖÀàÊı¾İ£¬µÃµ½null»¹ÊÇ·Çnull£¿£¿£¿ ¡ª¡ª¡ª¡ª·Çnull£¬¸÷ÊôĞÔ¶¼ÓĞÖµ
+        // å¦‚æœæ²¡æœ‰åˆ†ç±»æ•°æ®ï¼Œå¾—åˆ°nullè¿˜æ˜¯énullï¼Ÿï¼Ÿï¼Ÿ â€”â€”â€”â€”énullï¼Œå„å±æ€§éƒ½æœ‰å€¼
         Page currentPage = categoryService.findPageCategories(currentPageNum);
         if (currentPage == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() == 0) {
-            response.getWriter().println("<script>alert('¸ÃÒ³ÉĞÎŞ·ÖÀà£¡');</script>");
+            response.getWriter().println("<script>alert('è¯¥é¡µå°šæ— åˆ†ç±»ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
             request.setAttribute("page", currentPage);
-            // °Ñµ±Ç°Ò³Âë ´æÈësession
+            // æŠŠå½“å‰é¡µç  å­˜å…¥session
             request.getSession().setAttribute("currentCategoryPageNum", currentPage.getCurrentPageNum());
-            // °Ñµ±Ç°Ò³Âë ´æÈëcontext
+            // æŠŠå½“å‰é¡µç  å­˜å…¥context
             request.getServletContext().setAttribute("totalPageNum", currentPage.getTotalPageNum());
             request.getRequestDispatcher("/admin/category/categoryList.jsp").forward(request, response);
         }
@@ -94,12 +94,12 @@ public class CategoryServlet extends HttpServlet {
     private void deleteMultiCategory(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] cidStrArray = request.getParameterValues("cid");
         if (cidStrArray == null) {
-            response.getWriter().println("<script>alert('ÇëÑ¡Ôñ·ÖÀà£¡');</script>");
+            response.getWriter().println("<script>alert('è¯·é€‰æ‹©åˆ†ç±»ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                     request.getSession().getAttribute("currentCategoryPageNum"));
             return;
         }
-        /*stringÊı×é×ªintÊı×é*/
+        /*stringæ•°ç»„è½¬intæ•°ç»„*/
         int[] cidArray = new int[cidStrArray.length];
         for (int i = 0; i < cidStrArray.length; i++) {
             cidArray[i] = Integer.parseInt(cidStrArray[i]);
@@ -108,12 +108,12 @@ public class CategoryServlet extends HttpServlet {
             int result = categoryService.deleteCategory(cid);
             switch (result) {
                 case 0:
-                    response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>" + "cid = "+ cid);
+                    response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>" + "cid = "+ cid);
                     break;
                 default:
             }
         }
-        response.getWriter().println("<script>alert('É¾³ı·ÖÀà³É¹¦£¡');</script>");
+        response.getWriter().println("<script>alert('åˆ é™¤åˆ†ç±»æˆåŠŸï¼');</script>");
         response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                 request.getSession().getAttribute("currentCategoryPageNum"));
 
@@ -130,15 +130,15 @@ public class CategoryServlet extends HttpServlet {
             cid = Integer.parseInt(request.getParameter("cid"));
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('cid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('cidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         int result = categoryService.deleteCategory(cid);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('É¾³ı·ÖÀà³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('åˆ é™¤åˆ†ç±»æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0,    url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 break;
@@ -153,10 +153,10 @@ public class CategoryServlet extends HttpServlet {
         int result = categoryService.updateCategory(cid, cname);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('ĞŞ¸Ä·ÖÀà³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('ä¿®æ”¹åˆ†ç±»æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 break;
@@ -169,16 +169,16 @@ public class CategoryServlet extends HttpServlet {
 
         List<Category> categoryList = categoryService.findAllCategory();
         if (categoryList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (categoryList != null && categoryList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞ·ÖÀà£¡');</script>");
+            response.getWriter().println("<script>alert('å°šæ— åˆ†ç±»ï¼');</script>");
             return;
         } else if (categoryList != null && categoryList.size() != 0) {
             System.out.println("categoryList = " + categoryList);
-            // ´æÈërequestÓò
+            // å­˜å…¥requeståŸŸ
             request.setAttribute("categories", categoryList);
-            // ´æÈëcontextÓò
+            // å­˜å…¥contextåŸŸ
             request.getServletContext().setAttribute("categories", categoryList);
             request.getRequestDispatcher("/admin/product/addProduct.jsp").forward(request, response);
         }
@@ -187,16 +187,16 @@ public class CategoryServlet extends HttpServlet {
     private void addCategory(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String cname = request.getParameter("cname");
         if (StringUtils.isEmpty(cname)) {
-            response.getWriter().println("cname²ÎÊı²»ÄÜÎª¿Õ");
+            response.getWriter().println("cnameå‚æ•°ä¸èƒ½ä¸ºç©º");
             return;
         }
         int addResult = categoryService.addCategory(cname);
         switch (addResult) {
             case 0:
-                response.getWriter().println("<script>alert('¸Ã·ÖÀàÒÑ´æÔÚ»ò·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('è¯¥åˆ†ç±»å·²å­˜åœ¨æˆ–æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('Ìí¼Ó·ÖÀà³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('æ·»åŠ åˆ†ç±»æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                         request.getSession().getAttribute("currentCategoryPageNum"));
                 break;

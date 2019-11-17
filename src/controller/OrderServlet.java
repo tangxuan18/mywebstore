@@ -4,6 +4,7 @@ import bean.Order;
 import bean.OrderItem;
 import bean.Page;
 import bean.User;
+import org.apache.commons.beanutils.BeanUtils;
 import service.OrderService;
 import service.impl.OrderServiceImpl;
 import service.ProductService;
@@ -16,9 +17,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -34,82 +37,81 @@ public class OrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         switch (op) {
+            // ç¡®è®¤è®¢å•
             case "placeOrder":
-                placeOrder(request, response); // È·ÈÏ¶©µ¥
+                placeOrder(request, response);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + op);
         }
     }
 
+    /**
+     * ä¸‹å•æ“ä½œ
+     * å­æ“ä½œåŒ…æ‹¬ï¼š
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException
+     */
     private void placeOrder(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        /*½ÓÊÕÇ°¶Ë²ÎÊı*/
-        String jsp = request.getParameter("orderJsp");
-        String[] selectedCartItemIds = request.getParameterValues("ids");
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        String toJsp = request.getParameter("orderJsp");
+        String[] selectedCartItemIds = parameterMap.get("ids");
         if (selectedCartItemIds == null) {
-            response.getWriter().println("<script>alert('ÇëÑ¡ÔñÉÌÆ·ÏÂµ¥£¡ids²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('è¯·é€‰æ‹©å•†å“ä¸‹å•ï¼idså‚æ•°ä¸ºç©ºï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         }
-        String receiverName = request.getParameter("receiverName");
-        String receiverMobile = request.getParameter("receiverMobile");
-        String receiverAddress = request.getParameter("receiverAddress");
-        String username = request.getParameter("username");
-        if (StringUtils.isEmpty(receiverName) || StringUtils.isEmpty(receiverMobile) || StringUtils.isEmpty(receiverAddress) || StringUtils.isEmpty(username)) {
-            response.getWriter().println("<script>alert('receiverName/receiverMobile/receiverAddress/username²ÎÊıÎª¿Õ£¡');</script>");
-            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
-            return;
-        }
+        // æ ¼å¼è½¬æ¢selectedCartItemIds
         int[] selectedCartItemIdArray = new int[selectedCartItemIds.length];
-        double totalPrice = 0;
-        int uid = 0;
         try {
-            totalPrice = Double.parseDouble(request.getParameter("money"));
             for (int i = 0; i < selectedCartItemIds.length; i++) {
                 selectedCartItemIdArray[i] = Integer.parseInt(selectedCartItemIds[i]);
             }
-            uid = Integer.parseInt(request.getParameter("uid"));
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('uid/totalPrice/selectedPidArray²ÎÊı¸ñÊ½´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('uid/totalPrice/selectedPidArrayå‚æ•°æ ¼å¼é”™è¯¯ï¼');</script>");
         }
-        /*·â×°Ç°¶Ë²ÎÊı*/
+        // å°è£…Order
         Order order = new Order();
         String orderNum = UUID.randomUUID().toString();
-        order.setOrderNum(orderNum); // ¶©µ¥ºÅ
-        order.setTotalPrice(totalPrice); // ×Ü¼Û
-        order.setReceiverName(receiverName);
-        order.setReceiverMobile(receiverMobile);
-        order.setReceiverAddress(receiverAddress);
-        order.setPayStatus(1); // ¶©µ¥×´Ì¬
-        order.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); // ÏÂµ¥Ê±¼ä
-        order.setUid(uid);
-        order.setUsername(username);
-        /*£¨Ò»£©ÑéÖ¤¿â´æ*/
+        String orderTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        int payStatus = 1;
+        try {
+            BeanUtils.populate(order, parameterMap);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        // Orderè¡¥ä¸Šä¸‹å•æ—¶ç”Ÿæˆçš„å±æ€§
+        order.setOrderNum(orderNum);
+        order.setPayStatus(payStatus);
+        order.setOrderTime(orderTime);
+        order.setOrderNum(orderNum);
+        // ä¸‹é¢æ­£å¼è¿›å…¥ä¸‹å•æ“ä½œ
+        /*ï¼ˆä¸€ï¼‰éªŒè¯åº“å­˜*/
         int confirmStockResult = orderService.confirmStock(selectedCartItemIdArray);
-        if(confirmStockResult == 0){
-            response.getWriter().println("<script>alert('¿â´æ²»×ã£¡');</script>");
+        if (confirmStockResult == 0) {
+            response.getWriter().println("<script>alert('åº“å­˜ä¸è¶³ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         }
-        /*£¨Áù£©²éÑ¯orderList*/
-        List<Order> orderList = orderService.placeOrder(order, selectedCartItemIdArray, uid);
-//        System.out.println("orderList = " + orderList);
+        /*ï¼ˆå…­ï¼‰æŸ¥è¯¢orderList*/
+        List<Order> orderList = orderService.placeOrder(order, selectedCartItemIdArray);
         if (orderList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
-        } else if (orderList != null && orderList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞ¶©µ¥£¡');</script>");
+        } else if (orderList.size() == 0) {
+            response.getWriter().println("<script>alert('å°šæ— è®¢å•ï¼');</script>");
             return;
         } else {
-//            request.getSession().setAttribute("orders", orderList);
             request.setAttribute("orders", orderList);
-//            request.getRequestDispatcher("/" + jsp + ".jsp").forward(request, response);
-            request.getRequestDispatcher("/"+ jsp + ".jsp").forward(request, response);
+            request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
         }
     }
 
@@ -117,7 +119,7 @@ public class OrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         switch (op) {
@@ -142,42 +144,42 @@ public class OrderServlet extends HttpServlet {
         String payStatus = request.getParameter("state");
         String oid = request.getParameter("oid");
         if (StringUtils.isEmpty(payStatus)) {
-            response.getWriter().println("<script>alert('Ç°¶Ë²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('å‰ç«¯å‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         int orderId = 0;
-        try{
+        try {
             orderId = Integer.parseInt(oid);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('oid²ÎÊı¸ñÊ½´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('oidå‚æ•°æ ¼å¼é”™è¯¯ï¼');</script>");
         }
         Order order = new Order();
         order.setPayStatus(0);
         order.setOrderId(orderId);
-        /*£¨Ò»£©*/
-        int result  = orderService.cancelOrder(order);
-        switch (result){
+        /*ï¼ˆä¸€ï¼‰*/
+        int result = orderService.cancelOrder(order);
+        switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             case 1:
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findUserOrders");
         }
     }
 
     private void findUserOrders(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        User user = (User) request.getSession().getAttribute("user"); //´ÓsessionÓò»ñÈ¡User¶ÔÏó
-        if(user == null){
-            response.getWriter().println("<script>alert('ÇëÏÈµÇÂ¼£¡');</script>");
+        User user = (User) request.getSession().getAttribute("user"); //ä»sessionåŸŸè·å–Userå¯¹è±¡
+        if (user == null) {
+            response.getWriter().println("<script>alert('è¯·å…ˆç™»å½•ï¼');</script>");
             return;
         }
         int uid = user.getUid();
         List<Order> orderList = orderService.listOrdersByUid(uid);
         if (orderList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (orderList != null && orderList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞ¶©µ¥£¡');</script>");
+            response.getWriter().println("<script>alert('å°šæ— è®¢å•ï¼');</script>");
             return;
         } else {
             request.setAttribute("orders", orderList);
@@ -188,16 +190,16 @@ public class OrderServlet extends HttpServlet {
     private void findOrderDetail(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String orderNum = request.getParameter("oid");
         if (StringUtils.isEmpty(orderNum)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õ£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºï¼');</script>");
             return;
         }
         List<OrderItem> orderItemList = orderService.listOrderItems(orderNum);
         System.out.println("orderItemList = " + orderItemList);
         if (orderItemList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (orderItemList != null && orderItemList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞ¶©µ¥ÏêÇé£¡');</script>");
+            response.getWriter().println("<script>alert('å°šæ— è®¢å•è¯¦æƒ…ï¼');</script>");
             return;
         } else {
             request.setAttribute("orderItems", orderItemList);
@@ -211,19 +213,19 @@ public class OrderServlet extends HttpServlet {
             currentPageNum = Integer.parseInt(request.getParameter("num"));
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('num²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('numå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         Page currentPage = orderService.listPageOrders(currentPageNum);
 //        System.out.println(currentPage);
         if (currentPage == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() == 0) {
-            response.getWriter().println("<script>alert('¸ÃÒ³ÉĞÎŞÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('è¯¥é¡µå°šæ— å•†å“ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
             request.setAttribute("page", currentPage);
-            // °Ñµ±Ç°Ò³Âë ´æÈësession
+            // æŠŠå½“å‰é¡µç  å­˜å…¥session
             request.getSession().setAttribute("currentProductPageNum", currentPage.getCurrentPageNum());
             request.getRequestDispatcher("/admin/order/orderList.jsp").forward(request, response);
         }

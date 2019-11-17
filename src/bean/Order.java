@@ -7,9 +7,13 @@ public class Order {
     private int orderId;
 
     private List<OrderItem> orderItemList;
-
+    /**
+     * 订单号
+     */
     private String orderNum;
-
+    /**
+     * 订单总价
+     */
     private double totalPrice;
 
     private String receiverName;
