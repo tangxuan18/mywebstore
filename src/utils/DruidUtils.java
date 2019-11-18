@@ -22,6 +22,10 @@ public class DruidUtils {
      */
     private static DataSource dataSource;
 
+    /**
+     * threadLocal用于线程中的数据隔离
+     * 此时就是Connection隔离
+     */
     private static ThreadLocal<Connection> threadLocal = new ThreadLocal<>();
 
     /**

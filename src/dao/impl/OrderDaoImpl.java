@@ -74,9 +74,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public int countTotalOrderCount() {
-        Long totalCount = 0L; //Long型后加大L
+        Long totalCount = 0L;
         try {
-            totalCount = (Long) runner.query("select count(orderId) from t_order", new ScalarHandler()); // 返回Long类型
+            totalCount = (Long) runner.query("select count(orderId) from t_order", new ScalarHandler());
         } catch (SQLException e) {
             e.printStackTrace();
         }

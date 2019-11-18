@@ -90,15 +90,15 @@ public class OrderServlet extends HttpServlet {
         order.setPayStatus(1);
         order.setOrderTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         // 1 验证库存
-        int confirmStockResult = orderService.confirmStock(selectedCartItemIdArray);
-        if (confirmStockResult == 0) {
-            response.getWriter().println("<script>alert('十分抱歉！库存不足！');</script>");
+        String confirmStockResult = orderService.confirmStock(selectedCartItemIdArray);
+        if (!"enough".equals(confirmStockResult)) {
+            response.getWriter().println("<script>alert('十分抱歉！" + confirmStockResult + "库存不足！请重新下单或挑选其他商品吧！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         }
         // 下面正式进入下单操作
         List<Order> orderList = null;
-        // 如果下单异常，需要提示用户
+        // try如果下单异常，需要提示用户
         try {
             orderList = orderService.placeOrder(order, selectedCartItemIdArray);
         } catch (Exception e) {
@@ -146,6 +146,12 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    /**
+     * 取消订单操作
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     private void cancelOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String payStatus = request.getParameter("state");
         String oid = request.getParameter("oid");
@@ -168,6 +174,7 @@ public class OrderServlet extends HttpServlet {
         switch (result) {
             case 0:
                 response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
             case 1:
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findUserOrders");
                 break;
@@ -177,7 +184,7 @@ public class OrderServlet extends HttpServlet {
     }
 
     private void findUserOrders(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        User user = (User) request.getSession().getAttribute("user"); //从session域获取User对象
+        User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             response.getWriter().println("<script>alert('请先登录！');</script>");
             return;

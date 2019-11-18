@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
         Connection connection = null;
         Savepoint savePointWholeProcess = null;
         try {
-            // 单线程Connection，引入事务
+            // 从threadLocal取出Connection，引入事务
             connection = DruidUtils.getConnection(true);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,9 +90,9 @@ public class OrderServiceImpl implements OrderService {
             try {
                 connection.rollback(savePointWholeProcess);
                 System.out.println("JDBC Transaction rolled back to savepoint successfully");
-                // 最后提交commit()
+                // 如果出现异常，回滚后commit()
                 connection.commit();
-                throw new Exception("事务回滚，提示用户");
+                throw new Exception("事务回滚，页面提示用户");
             } catch (SQLException e1) {
                 e1.printStackTrace();
                 System.out.println("JDBC Transaction failed to roll back to savepoint");
@@ -158,7 +158,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int confirmStock(int[] selectedCartItemIdArray) {
+    public String confirmStock(int[] selectedCartItemIdArray) {
         List<CartItem> selectedCartItemList = listSelectedCartItems(selectedCartItemIdArray);
         for (CartItem cartItem : selectedCartItemList) {
             // 根据cartItem查出需要的pcount
@@ -166,12 +166,12 @@ public class OrderServiceImpl implements OrderService {
             // 根据pid查出实际库存
             int pid = cartItem.getProduct().getId();
             int totalStockCount = productDao.getProductByPid(pid).getTotalStockCount();
-            // 如果库存<需求
+            // 如果库存<需求，返回库存不足的
             if (totalStockCount < productCount) {
-                return 0;
+                return cartItem.getProduct().getProductName();
             }
         }
-        return 1;
+        return "enough";
     }
 
     private List<CartItem> listSelectedCartItems(int[] selectedCartItemIdArray) {

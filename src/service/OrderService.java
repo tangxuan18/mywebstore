@@ -16,7 +16,7 @@ public interface OrderService {
 
     int cancelOrder(Order order);
 
-    int confirmStock(int[] selectedCartItemIdArray);
+    String confirmStock(int[] selectedCartItemIdArray);
 
     int copyCartItemsToOrderItems(int[] selectedCartItemIdArray, Order order);
 
