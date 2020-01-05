@@ -219,6 +219,8 @@ public class UserServlet extends HttpServlet {
             case 1:
                 response.sendRedirect(request.getContextPath() + "/user/activateEmailSuccess.jsp");
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 }

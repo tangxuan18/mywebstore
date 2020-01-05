@@ -18,9 +18,5 @@ public interface OrderService {
 
     String confirmStock(int[] selectedCartItemIdArray);
 
-    int copyCartItemsToOrderItems(int[] selectedCartItemIdArray, Order order);
-
-    int deleteSelectedCartItems(int[] selectedCartItemIdArray);
-
     List<Order> placeOrder(Order order, int[] selectedCartItemIdArray) throws Exception;
 }

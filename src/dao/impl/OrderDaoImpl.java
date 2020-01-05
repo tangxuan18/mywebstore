@@ -20,32 +20,22 @@ public class OrderDaoImpl implements OrderDao {
     private QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
 
     @Override
-    public int insertOrder(Order order) {
-        try {
-            QueryRunner runnerSameConnection = new QueryRunner();
-//            int i = 1 / 0;
-            runnerSameConnection.update(DruidUtils.getConnection(true),"insert into t_order values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    order.getOrderNum(), order.getTotalPrice(), order.getReceiverName(), order.getReceiverMobile(),
-                    order.getReceiverAddress(), order.getPayStatus(), order.getOrderTime(),
-                    order.getUid(), order.getUsername());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+    public int insertOrder(Order order) throws SQLException {
+        QueryRunner runnerSameConnection = new QueryRunner();
+        runnerSameConnection.update(DruidUtils.getConnection(true), "insert into t_order values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                order.getOrderNum(), order.getTotalPrice(), order.getReceiverName(), order.getReceiverMobile(),
+                order.getReceiverAddress(), order.getPayStatus(), order.getOrderTime(),
+                order.getUid(), order.getUsername());
+
         return 1;
     }
 
     @Override
-    public int insertOrderItem(OrderItem orderItem) {
+    public int insertOrderItem(OrderItem orderItem) throws SQLException {
         QueryRunner runnerSameConnection = new QueryRunner();
-        try {
 //            int i = 1 / 0;
-            runnerSameConnection.update(DruidUtils.getConnection(true),"insert into t_orderItem values (null, ?, ?, ?, ?)",
-                    orderItem.getUid(), orderItem.getPid(), orderItem.getProductCount(), orderItem.getOrderNum());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+        runnerSameConnection.update(DruidUtils.getConnection(true), "insert into t_orderItem values (null, ?, ?, ?, ?)",
+                orderItem.getUid(), orderItem.getPid(), orderItem.getProductCount(), orderItem.getOrderNum());
         return 1;
     }
 
@@ -95,15 +85,10 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public int deleteSelectedCartItems(String sql) {
+    public int deleteSelectedCartItems(String sql) throws SQLException {
         QueryRunner runnerSameConnection = new QueryRunner();
-        try {
 //            int i = 1 / 0;
-            runnerSameConnection.update(DruidUtils.getConnection(true), sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+        runnerSameConnection.update(DruidUtils.getConnection(true), sql);
         return 1;
     }
 

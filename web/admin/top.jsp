@@ -94,7 +94,7 @@
                             <tr>
                                 <td width="16%"><span class="STYLE5"></span></td>
                                 <td width="75%">
-                                    <div align="center"><span class="STYLE7">Web工作室 (<a href="#" target="_blank">www.Webestore.com</a>)</span>
+                                    <div align="center"><span class="STYLE7">商城后台 (<a href="#" target="_blank">www.Webestore.com</a>)</span>
                                     </div>
                                 </td>
                                 <td width="9%">&nbsp;</td>

@@ -26,7 +26,7 @@ public class LoadOnServlet extends HttpServlet {
 //        System.out.println("categories = " + config.getServletContext().getAttribute("categories"));
         List<Category> categoryList = categoryService.findAllCategory();
         config.getServletContext().setAttribute("categories", categoryList);
-        System.out.println("categories = " + config.getServletContext().getAttribute("categories"));
+//        System.out.println("categories = " + config.getServletContext().getAttribute("categories"));
     }
 
     @Override

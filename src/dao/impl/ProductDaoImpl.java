@@ -47,10 +47,9 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     /**
-     *
      * @param currentPageNum
      * @param searchSql
-     * @param sqlParaList 多条件+分页 查询 的 参数列表
+     * @param sqlParaList    多条件+分页 查询 的 参数列表
      * @return
      */
     @Override
@@ -126,7 +125,7 @@ public class ProductDaoImpl implements ProductDao {
         try {
             productList = runner.query("select p.*, c.cname from t_product p inner join t_category c on p.cid = c.id where c.cname like ? or p.productName like ?",
                     new BeanListHandler<>(Product.class),
-                    "%"+keyword+"%", "%"+keyword+"%");
+                    "%" + keyword + "%", "%" + keyword + "%");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -134,18 +133,13 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public int updateTotalStockForPlaceOrder(CartItem cartItem) {
+    public int updateTotalStockForPlaceOrder(CartItem cartItem) throws SQLException {
         QueryRunner runnerSameConnection = new QueryRunner();
-        try {
 //            int i = 1 / 0;
-            runnerSameConnection.update(DruidUtils.getConnection(true),
-                    "update t_product p inner join t_cartItem c on c.pid = p.id " +
-                            "set p.totalStockCount = p.totalStockCount - ? where cartItemId = ?",
-                    cartItem.getProductCount(), cartItem.getCartItemId());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+        runnerSameConnection.update(DruidUtils.getConnection(true),
+                "update t_product p inner join t_cartItem c on c.pid = p.id " +
+                        "set p.totalStockCount = p.totalStockCount - ? where cartItemId = ?",
+                cartItem.getProductCount(), cartItem.getCartItemId());
         return 1;
     }
 

@@ -4,6 +4,7 @@ import bean.CartItem;
 import bean.OrderItem;
 import bean.Product;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ProductDao {
@@ -33,7 +34,7 @@ public interface ProductDao {
 
     List<Product> listProductsByKeyword(String keyword);
 
-    int updateTotalStockForPlaceOrder(CartItem cartItem);
+    int updateTotalStockForPlaceOrder(CartItem cartItem) throws SQLException;
 
     int updateTotalStockForCancelOrder(OrderItem orderItem);
 }

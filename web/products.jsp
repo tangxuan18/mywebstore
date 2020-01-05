@@ -145,7 +145,7 @@
         </div> <!-- END of templatemo_main -->
 
         <div id="templatemo_footer">
-            Copyright (c) 2016 <a href="#">Web商城</a> | <a href="#">Web工作室</a>
+            Copyright (c) 2016 <a href="#">Web商城</a> | <a href="#">商城后台</a>
         </div> <!-- END of templatemo_footer -->
 
     </div> <!-- END of templatemo_wrapper -->

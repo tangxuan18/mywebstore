@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface OrderDao {
-    int insertOrder(Order order);
+    int insertOrder(Order order) throws SQLException;
 
-    int insertOrderItem(OrderItem orderItem);
+    int insertOrderItem(OrderItem orderItem) throws SQLException;
 
     List<Order> listOrdersByUid(int uid);
 
@@ -19,7 +19,7 @@ public interface OrderDao {
 
     List<OrderItem> listOrderItems(String orderNum);
 
-    int deleteSelectedCartItems(String sql);
+    int deleteSelectedCartItems(String sql) throws SQLException;
 
     int updatePayStatus(int orderId, int payStatus);
 

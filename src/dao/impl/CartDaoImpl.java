@@ -120,7 +120,7 @@ public class CartDaoImpl implements CartDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("selectedCartItemList = " + cartItemList);
+//        System.out.println("selectedCartItemList = " + cartItemList);
         return cartItemList;
     }
 

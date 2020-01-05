@@ -96,14 +96,14 @@ public class OrderServlet extends HttpServlet {
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         }
-        // 下面正式进入下单操作
+        // 下面正式进入下单操作 2 3 4 5
         List<Order> orderList = null;
         // try如果下单异常，需要提示用户
         try {
             orderList = orderService.placeOrder(order, selectedCartItemIdArray);
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('服务器开小差了！您没有下单成功');</script>");
+            response.getWriter().println("<script>alert('服务器开小差了！您没有下单成功。。');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
         }
@@ -115,10 +115,10 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().println("<script>alert('尚无订单！');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
             return;
-        } else {
-            request.setAttribute("orders", orderList);
-            request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
         }
+        request.setAttribute("orders", orderList);
+        request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
+
     }
 
     @Override
@@ -148,6 +148,7 @@ public class OrderServlet extends HttpServlet {
 
     /**
      * 取消订单操作
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -193,10 +194,9 @@ public class OrderServlet extends HttpServlet {
         List<Order> orderList = orderService.listOrdersByUid(uid);
         if (orderList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
-            return;
-        } else if (orderList != null && orderList.size() == 0) {
+        } else if (orderList.size() == 0) {
             response.getWriter().println("<script>alert('尚无订单！');</script>");
-            return;
+            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
         } else {
             request.setAttribute("orders", orderList);
             request.getRequestDispatcher("/myOrders.jsp").forward(request, response);
@@ -210,7 +210,7 @@ public class OrderServlet extends HttpServlet {
             return;
         }
         List<OrderItem> orderItemList = orderService.listOrderItems(orderNum);
-        System.out.println("orderItemList = " + orderItemList);
+//        System.out.println("orderItemList = " + orderItemList);
         if (orderItemList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
@@ -237,7 +237,7 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() == 0) {
-            response.getWriter().println("<script>alert('该页尚无商品！');</script>");
+            response.getWriter().println("<script>alert('该页尚无订单！');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
             request.setAttribute("page", currentPage);

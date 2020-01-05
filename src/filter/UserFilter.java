@@ -32,14 +32,14 @@ public class UserFilter implements Filter {
             // 只有这个的错误：如果访问登录页，会直接重定向
             if (requestURI.contains("admin")) {
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/index.jsp");
-                System.out.println("adminFilter:" + requestURI);
+//                System.out.println("adminFilter:" + requestURI);
             }
         }
-        /*未登录用户账号不可访问order目录下的资源，而将重定向至管理登录页*/
+        // 未登录用户账号不可访问order目录下的资源，而将重定向至管理登录页
         if (user == null) {
             if (requestURI.endsWith("myOrders.jsp") || requestURI.endsWith("placeOrder.jsp") || requestURI.endsWith("shoppingcart.jsp")) {
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/user/login.jsp");
-                System.out.println("userFilter:" + requestURI);
+//                System.out.println("userFilter:" + requestURI);
             }
         }
         chain.doFilter(request, response);
