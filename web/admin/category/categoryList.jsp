@@ -208,7 +208,8 @@
                                     <span class="STYLE10">
                                         <a href="${pageContext.request.contextPath }/admin/category/updateCategory.jsp?cid=${category.id}">编辑</a>
                                         |
-                                        <a href="${pageContext.request.contextPath }/admin/categoryServlet?operation=deleteCategory&cid=${category.id}">删除</a>
+<%--                                        <a href="${pageContext.request.contextPath }/admin/categoryServlet?operation=deleteCategory&cid=${category.id}">删除</a>--%>
+                                         <a href="javascript:if(confirm('确实要删除吗?')) location='${pageContext.request.contextPath }/admin/categoryServlet?operation=deleteCategory&cid=${category.id}'">删除</a>
                                     </span>
                                 </div>
                             </td>

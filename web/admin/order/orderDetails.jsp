@@ -108,6 +108,12 @@
                         <td width="15%" height="20" bgcolor="d3eaef" class="STYLE6">
                             <div
                                     align="center">
+                                <span class="STYLE10">订单商品图片</span>
+                            </div>
+                        </td>
+                        <td width="15%" height="20" bgcolor="d3eaef" class="STYLE6">
+                            <div
+                                    align="center">
                                 <span class="STYLE10">订单商品号</span>
                             </div>
                         </td>
@@ -123,6 +129,12 @@
                                 <span class="STYLE10">商品号</span>
                             </div>
                         </td>
+                        <td width="8%" height="20" bgcolor="d3eaef" class="STYLE6">
+                            <div
+                                    align="center">
+                                <span class="STYLE10">商品名称</span>
+                            </div>
+                        </td>
                         <td width="10%" height="20" bgcolor="d3eaef" class="STYLE6">
                             <div
                                     align="center">
@@ -130,18 +142,24 @@
                             </div>
                         </td>
 
-                        <td width="10%" height="20" bgcolor="d3eaef" class="STYLE6">
+<%--                        <td width="10%" height="20" bgcolor="d3eaef" class="STYLE6">
                             <div
                                     align="center">
                                 <span class="STYLE10">基本操作</span>
                             </div>
-                        </td>
+                        </td>--%>
                     </tr>
                     <c:forEach items="${orderItems }" var="orderitem">
                         <tr>
                             <td height="2" bgcolor="#FFFFFF">
                                 <div align="center">
                                     <input type="checkbox" name="pid" id="pid" value="${orderitem.orderItemId }"/>
+                                </div>
+                            </td>
+                            <td height="15" bgcolor="#FFFFFF" class="STYLE6">
+                                <div align="center">
+                                    <img src="${orderitem.imgUrl }" style="width: 200px;height: 180px"
+                                         alt=""/>
                                 </div>
                             </td>
                             <td height="15" bgcolor="#FFFFFF" class="STYLE6">
@@ -155,15 +173,18 @@
                             <td height="8" bgcolor="#FFFFFF" class="STYLE19">
                                 <div align="center">${orderitem.pid}</div>
                             </td>
+                            <td height="8" bgcolor="#FFFFFF" class="STYLE19">
+                                <div align="center">${orderitem.productName}</div>
+                            </td>
                             <td height="10" bgcolor="#FFFFFF" class="STYLE19">
                                 <div align="center">${orderitem.productCount}</div>
                             </td>
 
-                            <td height="10" bgcolor="#FFFFFF">
-                                <div align="center" class="STYLE21">
-                                    <a href="#">删除</a>
-                                </div>
-                            </td>
+                                <%--                            <td height="10" bgcolor="#FFFFFF">
+                                                                <div align="center" class="STYLE21">
+                                                                    <a href="#">删除</a>
+                                                                </div>
+                                                            </td>--%>
                         </tr>
                     </c:forEach>
 

@@ -90,6 +90,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public int updatePayStatus(Order order) {
+        return this.orderDao.updatePayStatus(order.getOrderId(), order.getPayStatus());
+    }
+
+    @Override
     public Page listPageOrders(int currentPageNum) {
         Page<Order> page = new Page<Order>();
         page.setList(orderDao.listPageOrders(currentPageNum));
@@ -102,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderItem> listOrderItems(String orderNum) {
+    public List<OrderItem> listOrderItems(String orderNum) throws SQLException {
         return orderDao.listOrderItems(orderNum);
     }
 

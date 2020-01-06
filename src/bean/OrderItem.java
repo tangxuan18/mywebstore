@@ -6,11 +6,17 @@ public class OrderItem {
 
     private int uid;
     /**
-     * 不像CartItem那样保存Product对象，而是分别保存pid和productCount属性
+     * 不像CartItem那样保存Product对象，而是分别保存属性
      */
     private int pid;
 
+    private String productName;
+
     private int productCount;
+
+    private String imgUrl;
+
+    private double webStorePrice;
 
     private String orderNum;
 
@@ -38,12 +44,36 @@ public class OrderItem {
         this.pid = pid;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     public int getProductCount() {
         return productCount;
     }
 
     public void setProductCount(int productCount) {
         this.productCount = productCount;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public double getWebStorePrice() {
+        return webStorePrice;
+    }
+
+    public void setWebStorePrice(double webStorePrice) {
+        this.webStorePrice = webStorePrice;
     }
 
     public String getOrderNum() {

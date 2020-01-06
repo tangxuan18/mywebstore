@@ -154,7 +154,8 @@
                             </td>
                             <td height="20" bgcolor="#FFFFFF">
                                 <div align="center" class="STYLE21">
-                                    <a href="${pageContext.request.contextPath }/admin/adminServlet?operation=deleteOneAdmin&aid=${admin.id}">删除</a>
+<%--                                    <a href="${pageContext.request.contextPath }/admin/adminServlet?operation=deleteOneAdmin&aid=${admin.id}">删除</a>--%>
+                                    <a href="javascript:if(confirm('确实要删除吗?')) location='${pageContext.request.contextPath }/admin/adminServlet?operation=deleteOneAdmin&aid=${admin.id}'">删除</a>
                                     |
                                     <a href="${pageContext.request.contextPath }/admin/admin/updateAdmin.jsp?aid=${admin.id}&username=${admin.username}&password=${admin.password}">编辑</a>
                                 </div>

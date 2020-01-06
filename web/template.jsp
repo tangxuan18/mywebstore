@@ -13,8 +13,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>top</title>
-    <meta name="keywords" content="shoes store, free template, ecommerce, online shop, website templates, CSS, HTML"/>
-    <meta name="description" content="Shoes Store is a free ecommerce template provided "/>
+    <meta name="keywords" content="web store, free template, ecommerce, online shop, website templates, CSS, HTML"/>
+    <meta name="description" content="web store is a free ecommerce template provided "/>
     <link href="templatemo_style.css" rel="stylesheet" type="text/css"/>
 
     <link rel="stylesheet" href="nivo-slider.css" type="text/css" media="screen"/>

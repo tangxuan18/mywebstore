@@ -40,9 +40,8 @@
 </c:if>--%>
 <div id="templatemo_body_wrapper">
     <div id="templatemo_wrapper">
-
         <div id="content" class="float_r">
-            <h4><img src="${pageContext.request.contextPath }/images/cart.gif"/>购物车</h4>
+            <h4><img src="${pageContext.request.contextPath }/images/cart.gif"/>订单详情</h4>
             <form action="">
                 <table width="680px" cellspacing="0" cellpadding="5" bgcolor="#f0f8ff">
                     <tr bgcolor="#ddd">
@@ -51,36 +50,25 @@
                         <th width="100" align="center">数量</th>
                         <th width="60" align="right">价格</th>
                         <th width="60" align="right">总价</th>
+                        <th width="90"></th>
+
                     </tr>
                     <%--                        <c:if test="${!empty user }">--%>
                     <c:set var="totalCount" value="0"> </c:set>
                     <c:set var="sum" value="0"> </c:set>
-                    <c:forEach items="${cart.cartItems}" var="item">
+                    <c:forEach items="${requestScope.orderItems}" var="item">
                         <tr>
-                            <td><img src="${item.product.imgUrl }" style="width: 200px;height: 180px"
+                            <td><img src="${item.imgUrl }" style="width: 200px;height: 180px"
                                      alt=""/></td>
-                            <td>${item.product.productName }</td>
+                            <td>${item.productName }</td>
                             <td align="center">
-                                <c:if test="${item.productCount != 1}">
-                                    <a href="${pageContext.request.contextPath }/cartServlet?op=updateOneProductCount&uid=${user.uid}&itemId=${item.cartItemId}&addOrDelete=delete">
-                                        <b> ➖ </b>
-                                    </a>
-                                </c:if>
-                                <c:if test="${item.productCount == 1}">
-                                    <a href="javascript:if(confirm('确实要从购物车删除吗?')) location='${pageContext.request.contextPath }/cartServlet?op=updateOneProductCount&uid=${user.uid}&itemId=${item.cartItemId}&addOrDelete=delete'">
-                                        <b> ➖ </b>
-                                    </a>
-                                </c:if>
-                                <font style="width: 20px; text-align: right"/>${item.productCount }</font>
-                                <a href="${pageContext.request.contextPath }/cartServlet?op=updateOneProductCount&uid=${user.uid}&itemId=${item.cartItemId}&addOrDelete=add">
-                                    <b> ➕ </b>
-                                </a>
+                                <font style="width: 20px; text-align: right">${item.productCount }</font>
                             </td>
-                            <td align="right">${item.product.webStorePrice } </td>
-                            <td align="right">${item.product.webStorePrice*item.productCount } </td>
+                            <td align="right">${item.webStorePrice } </td>
+                            <td align="right">${item.webStorePrice*item.productCount } </td>
                         </tr>
                         <c:set var="totalCount" value="${totalCount + item.productCount}"> </c:set>
-                        <c:set var="sum" value="${sum + item.productCount*item.product.webStorePrice}"> </c:set>
+                        <c:set var="sum" value="${sum + item.productCount*item.webStorePrice}"> </c:set>
                     </c:forEach>
                     <tr>
                         <td>总件数:<span class="sumPrice"> ${totalCount}</span>件</td>
@@ -91,19 +79,9 @@
                     <%--                        </c:if>--%>
                 </table>
             </form>
-            <div style="float:right; width: 255px; margin-top: 20px;">
-                <c:if test="${!empty cart.cartItems}">
-                    <%--                    <p><a href="${pageContext.request.contextPath }/cartServlet?op=findCart&jsp=placeOrder">立即购买</a></p>--%>
-                    <p><a href="${pageContext.request.contextPath }/placeOrder.jsp">立即购买</a></p>
-                </c:if>
-                <p><a href="${pageContext.request.contextPath}/index.jsp">继续购物</a></p>
-
-            </div>
         </div>
         <div class="cleaner"></div>
     </div>
-
-
 
     <div id="templatemo_footer">
         Copyright (c) 2016 <a href="#">shoe商城</a> | <a href="#">版权所有</a>

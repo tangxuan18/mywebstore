@@ -17,7 +17,7 @@ public interface OrderDao {
 
     int countTotalOrderCount();
 
-    List<OrderItem> listOrderItems(String orderNum);
+    List<OrderItem> listOrderItems(String orderNum) throws SQLException;
 
     int deleteSelectedCartItems(String sql) throws SQLException;
 

@@ -5,4 +5,6 @@
 
 src/rebel.xml
 *.properties
+src/com/alipay
+web/alipay
 

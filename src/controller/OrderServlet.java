@@ -7,8 +7,6 @@ import bean.User;
 import org.apache.commons.beanutils.BeanUtils;
 import service.OrderService;
 import service.impl.OrderServiceImpl;
-import service.ProductService;
-import service.impl.ProductServiceImpl;
 import utils.StringUtils;
 
 import javax.servlet.ServletException;
@@ -18,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.UUID;
 public class OrderServlet extends HttpServlet {
 
     private OrderService orderService = new OrderServiceImpl();
-    private ProductService productService = new ProductServiceImpl();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,10 +48,62 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    private void cancelOrderBySeller(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String oid = request.getParameter("oid");
+        int orderId = 0;
+        try {
+            orderId = Integer.parseInt(oid);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('oid参数格式错误！');</script>");
+        }
+        Order order = new Order();
+        // 卖家取消订单，订单状态为-1
+        order.setPayStatus(-1);
+        order.setOrderId(orderId);
+        int result = orderService.cancelOrder(order);
+        switch (result) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
+            case 1:
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findPageOrders&num=" +
+                        request.getSession().getAttribute("currentOrderPageNum"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
+        }
+    }
+
+    private void confirmReceipt(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int oid = 0;
+        try {
+            oid = Integer.parseInt(request.getParameter("oid"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('oid参数类型错误！');</script>");
+        }
+        Order order = new Order();
+        order.setOrderId(oid);
+        // 买家已付款，准备发货
+        order.setPayStatus(2);
+        int updateRes = orderService.updatePayStatus(order);
+        switch (updateRes) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
+            case 1:
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findPageOrders&num=" +
+                        request.getSession().getAttribute("currentOrderPageNum"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateRes);
+        }
+    }
+
     /**
      * 下单操作
      * 子操作包括：
-     *
      * @param request
      * @param response
      * @throws IOException
@@ -97,7 +147,7 @@ public class OrderServlet extends HttpServlet {
             return;
         }
         // 下面正式进入下单操作 2 3 4 5
-        List<Order> orderList = null;
+        List<Order> orderList;
         // try如果下单异常，需要提示用户
         try {
             orderList = orderService.placeOrder(order, selectedCartItemIdArray);
@@ -141,8 +191,154 @@ public class OrderServlet extends HttpServlet {
             case "cancelOrder":
                 cancelOrder(request, response);
                 break;
+            case "confirmReceipt":
+                confirmReceipt(request, response);
+                break;
+            case "sendGoods":
+                sendGoods(request, response);
+                break;
+            case "requestRefund":
+                requestRefund(request, response);
+                break;
+            case "completeRefund":
+                completeRefund(request, response);
+                break;
+            case "confirmProductsReceipt":
+                confirmProductsReceipt(request, response);
+                break;
+            case "cancelOrderBySeller":
+                cancelOrderBySeller(request, response);
+                break;
+            case "userOrderDetail":
+                getUserOrderDetail(request, response);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + op);
+        }
+    }
+
+    private void getUserOrderDetail(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String toJsp = request.getParameter("toJsp");
+        String orderNum = request.getParameter("orderNum");
+        if (StringUtils.isEmpty(orderNum)) {
+            response.getWriter().println("<script>alert('op参数为空！');</script>");
+            return;
+        }
+        List<OrderItem> orderItemList = null;
+        try {
+            orderItemList = orderService.listOrderItems(orderNum);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (orderItemList == null) {
+            response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+        } else if (orderItemList.size() == 0) {
+            response.getWriter().println("<script>alert('尚无订单详情！');</script>");
+        } else {
+            request.setAttribute("orderItems", orderItemList);
+            request.getRequestDispatcher("/" + toJsp + ".jsp").forward(request, response);
+        }
+    }
+
+    private void confirmProductsReceipt(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int oid = 0;
+        try {
+            oid = Integer.parseInt(request.getParameter("oid"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('oid参数类型错误！');</script>");
+        }
+        Order order = new Order();
+        order.setOrderId(oid);
+        // 买家确认收货
+        order.setPayStatus(4);
+        int updateRes = orderService.updatePayStatus(order);
+        switch (updateRes) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
+            case 1:
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findUserOrders");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateRes);
+        }
+    }
+
+    private void completeRefund(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int oid = 0;
+        try {
+            oid = Integer.parseInt(request.getParameter("oid"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('oid参数类型错误！');</script>");
+        }
+        Order order = new Order();
+        order.setOrderId(oid);
+        // 买家已付款，准备发货
+        order.setPayStatus(6);
+        int updateRes = orderService.updatePayStatus(order);
+        switch (updateRes) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
+            case 1:
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findPageOrders&num=" +
+                        request.getSession().getAttribute("currentOrderPageNum"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateRes);
+        }
+    }
+
+    private void requestRefund(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int oid = 0;
+        try {
+            oid = Integer.parseInt(request.getParameter("oid"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('oid参数类型错误！');</script>");
+        }
+        Order order = new Order();
+        order.setOrderId(oid);
+        // 买家已付款，准备发货
+        order.setPayStatus(5);
+        int updateRes = orderService.updatePayStatus(order);
+        switch (updateRes) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
+            case 1:
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findUserOrders");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateRes);
+        }
+    }
+
+    private void sendGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int oid = 0;
+        try {
+            oid = Integer.parseInt(request.getParameter("oid"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<script>alert('oid参数类型错误！');</script>");
+        }
+        Order order = new Order();
+        order.setOrderId(oid);
+        // 买家已付款，准备发货
+        order.setPayStatus(3);
+        int updateRes = orderService.updatePayStatus(order);
+        switch (updateRes) {
+            case 0:
+                response.getWriter().println("<script>alert('服务器开小差了！');</script>");
+                break;
+            case 1:
+                response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findPageOrders&num=" +
+                        request.getSession().getAttribute("currentOrderPageNum"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateRes);
         }
     }
 
@@ -154,12 +350,7 @@ public class OrderServlet extends HttpServlet {
      * @throws IOException
      */
     private void cancelOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String payStatus = request.getParameter("state");
         String oid = request.getParameter("oid");
-        if (StringUtils.isEmpty(payStatus)) {
-            response.getWriter().println("<script>alert('前端参数为空！');</script>");
-            return;
-        }
         int orderId = 0;
         try {
             orderId = Integer.parseInt(oid);
@@ -168,9 +359,9 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().println("<script>alert('oid参数格式错误！');</script>");
         }
         Order order = new Order();
+        // 用户取消订单，订单状态为0
         order.setPayStatus(0);
         order.setOrderId(orderId);
-        /*（一）*/
         int result = orderService.cancelOrder(order);
         switch (result) {
             case 0:
@@ -209,12 +400,17 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().println("<script>alert('op参数为空！');</script>");
             return;
         }
-        List<OrderItem> orderItemList = orderService.listOrderItems(orderNum);
+        List<OrderItem> orderItemList = null;
+        try {
+            orderItemList = orderService.listOrderItems(orderNum);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 //        System.out.println("orderItemList = " + orderItemList);
         if (orderItemList == null) {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
             return;
-        } else if (orderItemList != null && orderItemList.size() == 0) {
+        } else if (orderItemList.size() == 0) {
             response.getWriter().println("<script>alert('尚无订单详情！');</script>");
             return;
         } else {
@@ -242,7 +438,7 @@ public class OrderServlet extends HttpServlet {
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
             request.setAttribute("page", currentPage);
             // 把当前页码 存入session
-            request.getSession().setAttribute("currentProductPageNum", currentPage.getCurrentPageNum());
+            request.getSession().setAttribute("currentOrderPageNum", currentPage.getCurrentPageNum());
             request.getRequestDispatcher("/admin/order/orderList.jsp").forward(request, response);
         }
     }

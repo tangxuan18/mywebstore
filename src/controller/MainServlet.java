@@ -30,7 +30,7 @@ public class MainServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õget£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºgetï¼');</script>");
             return;
         }
         switch (op){
@@ -64,10 +64,10 @@ public class MainServlet extends HttpServlet {
         }
         List<Product> productList = productService.listProductsByKeyword(keyword.trim());
         if (productList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (productList.size() == 0) {
-            response.getWriter().println("<script>alert('ºÜÒÅº¶£¬Ã»ÓĞÏà¹ØÉÌÆ·');</script>");
+            response.getWriter().println("<script>alert('å¾ˆé—æ†¾ï¼Œæ²¡æœ‰ç›¸å…³å•†å“');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         } else {
@@ -84,11 +84,11 @@ public class MainServlet extends HttpServlet {
             pid = Integer.parseInt(request.getParameter("pid"));
         }catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('cid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('cidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         Product product = productService.getProductByPid(pid);
         if (product == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         }
         request.setAttribute("product", product);
@@ -102,14 +102,14 @@ public class MainServlet extends HttpServlet {
             cid = Integer.parseInt(request.getParameter("cid"));
         }catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('cid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('cidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         List<Product> productList = productService.listProductsByCid(cid);
         if (productList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (productList.size() == 0) {
-            response.getWriter().println("<script>alert('¸Ã·ÖÀàÉĞÎŞÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('è¯¥åˆ†ç±»å°šæ— å•†å“ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         } else {
@@ -122,10 +122,10 @@ public class MainServlet extends HttpServlet {
     private void findHotProducts(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         List<Product> hotProductList = productService.listHotProducts();
         if (hotProductList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (hotProductList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞÈÈÃÅÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('å°šæ— çƒ­é—¨å•†å“ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         } else {
@@ -137,10 +137,10 @@ public class MainServlet extends HttpServlet {
     private void findTopProducts(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         List<Product> topProductList = productService.listTopProducts();
         if (topProductList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (topProductList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞ¶¥¼âÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('å°šæ— é¡¶å°–å•†å“ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/index.jsp");
             return;
         } else {
@@ -153,10 +153,10 @@ public class MainServlet extends HttpServlet {
         String jsp = request.getParameter("jsp");
         List<Category> categoryList = categoryService.findAllCategory();
         if (categoryList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (categoryList != null && categoryList.size() == 0) {
-            response.getWriter().println("<script>alert('ÉĞÎŞ·ÖÀà£¡');</script>");
+            response.getWriter().println("<script>alert('å°šæ— åˆ†ç±»ï¼');</script>");
             return;
         } else if (categoryList != null && categoryList.size() != 0) {
 //            System.out.println("categoryList = " + categoryList);

@@ -26,17 +26,17 @@ public class UploadUserInfoServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // ÓÃMyFileUploadUtils½ÓÊÕËùÓĞ²ÎÊı²¢·â×°µ½mapÖĞ£¬°üº¬Í¼Æ¬
+        // ç”¨MyFileUploadUtilsæ¥æ”¶æ‰€æœ‰å‚æ•°å¹¶å°è£…åˆ°mapä¸­ï¼ŒåŒ…å«å›¾ç‰‡
         Map<String, String> map = MyFileUploadUtils.parseRequest(request);
 //        System.out.println("request = " + request);
         String op = map.get("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õpost£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºpostï¼');</script>");
             return;
         }
         switch (op) {
             case "uploadUserInfo":
-                // °Ñmap´«¹ıÈ¥
+                // æŠŠmapä¼ è¿‡å»
                 uploadUserInfo(request, response, map);
                 break;
             default:
@@ -48,7 +48,7 @@ public class UploadUserInfoServlet extends HttpServlet {
      *
      * @param request
      * @param response
-     * @param map °üº¬ÎÄ¼şµÄmap
+     * @param map åŒ…å«æ–‡ä»¶çš„map
      * @throws IOException
      */
     private void uploadUserInfo(HttpServletRequest request, HttpServletResponse response, Map<String, String> map) throws IOException {
@@ -61,10 +61,10 @@ public class UploadUserInfoServlet extends HttpServlet {
         int result = userService.updateUser(user);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('¸ü¸ÄÓÃ»§ĞÅÏ¢Ê§°Ü');</script>");
+                response.getWriter().println("<script>alert('æ›´æ”¹ç”¨æˆ·ä¿¡æ¯å¤±è´¥');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('¸ü¸ÄÓÃ»§ĞÅÏ¢³É¹¦');</script>");
+                response.getWriter().println("<script>alert('æ›´æ”¹ç”¨æˆ·ä¿¡æ¯æˆåŠŸ');</script>");
                 request.getSession().setAttribute("user", user);
                 response.setHeader("refresh", "0, url = " + request.getContextPath() + "/user/personal.jsp");
                 break;

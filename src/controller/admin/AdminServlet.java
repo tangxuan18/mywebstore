@@ -52,21 +52,21 @@ public class AdminServlet extends HttpServlet {
         String[] aidArray = request.getParameterValues("aid");
         System.out.println(aidArray);
         if (aidArray == null) {
-            response.getWriter().println("<script>alert('ÇëÑ¡Ôñ¹ÜÀíÔ±£¡');</script>");
+            response.getWriter().println("<script>alert('è¯·é€‰æ‹©ç®¡ç†å‘˜ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findAllCategory");
             return;
         }
-        // ²ÉÓÃÑ­»·deleteOneµÄ·½Ê½
+        // é‡‡ç”¨å¾ªç¯deleteOneçš„æ–¹å¼
         for (String aid : aidArray) {
             int result = adminService.deleteOneAdmin(aid);
             switch (result) {
                 case 0:
-                    response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                    response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                     break;
                 default:
             }
         }
-        response.getWriter().println("<script>alert('ÅúÁ¿É¾³ı¹ÜÀíÔ±³É¹¦£¡');</script>");
+        response.getWriter().println("<script>alert('æ‰¹é‡åˆ é™¤ç®¡ç†å‘˜æˆåŠŸï¼');</script>");
         response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
     }
 
@@ -81,10 +81,10 @@ public class AdminServlet extends HttpServlet {
         int result = adminService.updateAdmin(admin);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('ĞŞ¸Ä¹ÜÀíÔ±³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('ä¿®æ”¹ç®¡ç†å‘˜æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
                 break;
             default:
@@ -92,7 +92,7 @@ public class AdminServlet extends HttpServlet {
     }
 
     /**
-     * ºÃÏñaidÎªStringÀàĞÍÒ²ĞĞ£¿£¿£¿
+     * å¥½åƒaidä¸ºStringç±»å‹ä¹Ÿè¡Œï¼Ÿï¼Ÿï¼Ÿ
      * @param request
      * @param response
      * @throws IOException
@@ -102,10 +102,10 @@ public class AdminServlet extends HttpServlet {
         int result = adminService.deleteOneAdmin(aid);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('É¾³ı¹ÜÀíÔ±³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('åˆ é™¤ç®¡ç†å‘˜æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
                 break;
             default:
@@ -115,11 +115,11 @@ public class AdminServlet extends HttpServlet {
     private void findAllAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         List<Admin> adminList = adminService.findAllAdmin();
         if (adminList == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else {
             System.out.println("adminList = " + adminList);
-            // ·ÅÈërequestÓò
+            // æ”¾å…¥requeståŸŸ
             request.setAttribute("admins", adminList);
             request.getRequestDispatcher("/admin/admin/adminList.jsp").forward(request, response);
         }
@@ -129,40 +129,40 @@ public class AdminServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-        /*Ğ£Ñé*/
-        // ·Ç¿ÕĞ£Ñé
+        /*æ ¡éªŒ*/
+        // éç©ºæ ¡éªŒ
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-            response.getWriter().println("<script>alert('ÕËºÅ»òÃÜÂë²»ÄÜÎª¿Õ£¡')</script>");
+            response.getWriter().println("<script>alert('è´¦å·æˆ–å¯†ç ä¸èƒ½ä¸ºç©ºï¼')</script>");
             return;
         }
-        // È·ÈÏÃÜÂëĞ£Ñé
+        // ç¡®è®¤å¯†ç æ ¡éªŒ
         if (!confirmPassword.equals(password)) {
-            response.getWriter().println("<script>alert('Á½´ÎÊäÈëÃÜÂë²»Í¬£¡')</script>");
+            response.getWriter().println("<script>alert('ä¸¤æ¬¡è¾“å…¥å¯†ç ä¸åŒï¼')</script>");
             return;
         }
-        // ·â×°¶ÔÏó
+        // å°è£…å¯¹è±¡
         Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
-        // ´«Èë¶ÔÏó
+        // ä¼ å…¥å¯¹è±¡
         int result = adminService.addAdmin(admin);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('Ìí¼Ó¹ÜÀíÔ±³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('æ·»åŠ ç®¡ç†å‘˜æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/adminServlet?operation=findAllAdmin");
                 break;
             default:
-                response.getWriter().println("<script>alert('switch default·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('switch defaultæœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
         }
     }
 
     private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println(request.getSession().getAttribute("currentAdmin") + "°²È«ÍË³ö£¡");
+        System.out.println(request.getSession().getAttribute("currentAdmin") + "å®‰å…¨é€€å‡ºï¼");
         request.getSession().removeAttribute("currentAdmin");
-        response.getWriter().println("<script>alert('°²È«ÍË³ö³É¹¦£¡');</script>");
+        response.getWriter().println("<script>alert('å®‰å…¨é€€å‡ºæˆåŠŸï¼');</script>");
 //        response.sendRedirect(request.getContextPath() + "/admin/index.jsp");
         response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/index.jsp");
     }
@@ -173,15 +173,17 @@ public class AdminServlet extends HttpServlet {
         Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
+
         Admin currentAdmin = adminService.findLoginAdmin(admin);
         if (currentAdmin == null) {
-            response.getWriter().println("<script>alert('ÓÃ»§Ãû»òÃÜÂë´íÎó');</script>");
+            response.getWriter().println("<script>alert('ç”¨æˆ·åæˆ–å¯†ç é”™è¯¯');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/index.jsp");
+            return;
         } else {
             System.out.println("currentAdmin = " + currentAdmin);
-            // currentAdmin´æÈësessionÓò
+            // currentAdminå­˜å…¥sessionåŸŸ
             request.getSession().setAttribute("currentAdmin", currentAdmin);
-            // TO EX Õâ¸öÂ·¾¶..
+            // TO EX è¿™ä¸ªè·¯å¾„..
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/main.jsp");
         }
     }

@@ -28,8 +28,8 @@ public class ProductServlet extends HttpServlet {
     private CategoryService categoryService = new CategoryServiceImpl();
 
     /**
-     * Ôö ¸Ä ÉÌÆ·
-     * °üº¬ÎÄ¼şÉÏ´«
+     * å¢ æ”¹ å•†å“
+     * åŒ…å«æ–‡ä»¶ä¸Šä¼ 
      * @param request
      * @param response
      * @throws ServletException
@@ -40,7 +40,7 @@ public class ProductServlet extends HttpServlet {
         Map<String, String> productMap = MyFileUploadUtils.parseRequest(request);
         String op = productMap.get("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õpost£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºpostï¼');</script>");
             return;
         }
         switch (op) {
@@ -61,16 +61,16 @@ public class ProductServlet extends HttpServlet {
             pid = Integer.parseInt(productMap.get("id"));
         }catch (Exception e){
             e.printStackTrace();
-            response.getWriter().println("<script>alert('pid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('pidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         String imgUrl = productMap.get("imgUrl");
-        // Èç¹ûÍ¼Æ¬Ã»×öĞŞ¸Ä£¬Ôòfile±êÇ©Îª¿Õ£¬»á´«¹ıÀ´Ò»¸öËæ»úurl£¬´ËÊ±²»ÄÜĞŞ¸ÄimgUrl
+        // å¦‚æœå›¾ç‰‡æ²¡åšä¿®æ”¹ï¼Œåˆ™fileæ ‡ç­¾ä¸ºç©ºï¼Œä¼šä¼ è¿‡æ¥ä¸€ä¸ªéšæœºurlï¼Œæ­¤æ—¶ä¸èƒ½ä¿®æ”¹imgUrl
         if(!StringUtils.isPicture(imgUrl)){
             String oldImgUrl = productService.getProduct(pid).getImgUrl();
             productMap.put("imgUrl", oldImgUrl);
         }
 //        System.out.println("modifiedProductMap = " + productMap);
-        // ·ñÔò£¬Èç¹ûĞŞ¸ÄÁËÍ¼Æ¬£¬²»¶ÔproductMap×ö¸Ä¶¯
+        // å¦åˆ™ï¼Œå¦‚æœä¿®æ”¹äº†å›¾ç‰‡ï¼Œä¸å¯¹productMapåšæ”¹åŠ¨
         Product product = new Product();
         try {
             BeanUtils.populate(product, productMap);
@@ -80,10 +80,10 @@ public class ProductServlet extends HttpServlet {
         int updateResult = productService.updateProduct(product);
         switch (updateResult) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('ĞŞ¸ÄÉÌÆ·³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('ä¿®æ”¹å•†å“æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/productServlet?op=findPageProducts&num=" +
                         request.getSession().getAttribute("currentProductPageNum"));
                 break;
@@ -98,12 +98,12 @@ public class ProductServlet extends HttpServlet {
             pid = Integer.parseInt(request.getParameter("pid"));
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('cid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('cidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         Product product = productService.getProduct(pid);
 //        System.out.println("product = " + product);
         if (product == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         }
         request.setAttribute("product", product);
@@ -111,7 +111,7 @@ public class ProductServlet extends HttpServlet {
     }
 
     /**
-     * ²é É¾ ÉÌÆ·
+     * æŸ¥ åˆ  å•†å“
      *
      * @param request
      * @param response
@@ -122,7 +122,7 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String op = request.getParameter("op");
         if (StringUtils.isEmpty(op)) {
-            response.getWriter().println("<script>alert('op²ÎÊıÎª¿Õget£¡');</script>");
+            response.getWriter().println("<script>alert('opå‚æ•°ä¸ºç©ºgetï¼');</script>");
             return;
         }
         switch (op) {
@@ -148,14 +148,14 @@ public class ProductServlet extends HttpServlet {
 
     private void deleteMultiProducts(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] pidStrArray = request.getParameterValues("pid");
-        /*stringÊı×é×ªintÊı×é*/
+        /*stringæ•°ç»„è½¬intæ•°ç»„*/
         int[] pidArray = new int[pidStrArray.length];
         for (int i = 0; i < pidStrArray.length; i++) {
             pidArray[i] = Integer.parseInt(pidStrArray[i]);
         }
 //        System.out.println(Arrays.toString(cidArray));
         if (pidStrArray == null) {
-            response.getWriter().println("<script>alert('ÇëÑ¡Ôñ·ÖÀà£¡');</script>");
+            response.getWriter().println("<script>alert('è¯·é€‰æ‹©åˆ†ç±»ï¼');</script>");
             response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/categoryServlet?operation=findPageCategories&num=" +
                     request.getSession().getAttribute("currentCategoryPageNum"));
             return;
@@ -164,34 +164,36 @@ public class ProductServlet extends HttpServlet {
             int result = productService.deleteOneProduct(pid);
             switch (result) {
                 case 0:
-                    response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                    response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + result);
             }
         }
-        response.getWriter().println("<script>alert('ÅúÁ¿É¾³ıÉÌÆ·³É¹¦£¡');</script>");
+        response.getWriter().println("<script>alert('æ‰¹é‡åˆ é™¤å•†å“æˆåŠŸï¼');</script>");
         response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/productServlet?op=findPageProducts&num=" +
                 request.getSession().getAttribute("currentProductPageNum"));
     }
 
     /**
-     * Ä£ºı²éÑ¯
+     * æ¨¡ç³ŠæŸ¥è¯¢
      * @param request
      * @param response
      * @throws IOException
      * @throws ServletException
      */
     private void searchPageProducts(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        /*½ÓÊÕÇ°¶ËÊı¾İ*/
-//        Map<String, String[]> parameterMap = request.getParameterMap(); // String[]ÎŞ·¨ÓÃBeanUtils
-//        Map<String, String> requestMap = MyFileUploadUtils.parseRequest(request); // ²ÎÊıÓÖÎŞ·¨´«¹ıÀ´
+        /*æ¥æ”¶å‰ç«¯æ•°æ®*/
+//        Map<String, String[]> parameterMap = request.getParameterMap(); // String[]æ— æ³•ç”¨BeanUtils
+//        Map<String, String> requestMap = MyFileUploadUtils.parseRequest(request); // å‚æ•°åˆæ— æ³•ä¼ è¿‡æ¥
         int currentPageNum = 1;
-        /*Èç¹ûÓÃ»§²»ÊäÈë£¬Ó¦¸Ã´«null£¬¶ø²»Ó¦¸Ã´«0Ö®ÀàµÄ£»Èç¹ûÓÃ»§ÊäÈë£¬ÓÖÓ¦¸Ã´«ÕıÈ·µÄÀàĞÍ*/
+        /*å¦‚æœç”¨æˆ·ä¸è¾“å…¥ï¼Œåº”è¯¥ä¼ nullï¼Œè€Œä¸åº”è¯¥ä¼ 0ä¹‹ç±»çš„ï¼›å¦‚æœç”¨æˆ·è¾“å…¥ï¼Œåˆåº”è¯¥ä¼ æ­£ç¡®çš„ç±»å‹*/
         String productNum = request.getParameter("productNum");
         String productName = request.getParameter("productName");
         int cid = 0;
         String minWebStorePrice = request.getParameter("minWebStorePrice");
         String maxWebStorePrice = request.getParameter("maxWebStorePrice");
-        /*·â×°Product£¬Èç¹ûÓÃ»§²»ÊäÈë£¬¾Í²»·â×°£»Èç¹ûÓÃ»§ÊäÈë£¬Ó¦¸Ã·â×°ÕıÈ·µÄÀàĞÍ*/
+        /*å°è£…Productï¼Œå¦‚æœç”¨æˆ·ä¸è¾“å…¥ï¼Œå°±ä¸å°è£…ï¼›å¦‚æœç”¨æˆ·è¾“å…¥ï¼Œåº”è¯¥å°è£…æ­£ç¡®çš„ç±»å‹*/
         Product product = new Product();
         product.setProductNum(productNum);
         product.setProductName(productName);
@@ -203,25 +205,25 @@ public class ProductServlet extends HttpServlet {
             cid = Integer.parseInt(request.getParameter("cid"));
         }catch (Exception e){
             e.printStackTrace();
-            response.getWriter().println("<script>alert('num/cid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('num/cidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         product.setCid(cid);
-        System.out.println("product = " + product);
-        // °ÑËÑË÷Ìõ¼ş´æÈësessionÓò£¬ÏÂ´Î´ò¿ªÊ±¼Ç×¡
+//        System.out.println("product = " + product);
+        // æŠŠæœç´¢æ¡ä»¶å­˜å…¥sessionåŸŸï¼Œä¸‹æ¬¡æ‰“å¼€æ—¶è®°ä½
         request.getSession().setAttribute("searchProduct", product);
         Page currentPage = productService.listSearchedPageProducts(product, currentPageNum);
         if (currentPage == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() == 0) {
-            response.getWriter().println("<script>alert('¸ÃÒ³ÉĞÎŞÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('è¯¥é¡µå°šæ— å•†å“ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
-            // µ±Ç°page´æÈërequest, ÒÔ±ã·­Ò³Ê±»ñÈ¡
+            // å½“å‰pageå­˜å…¥request, ä»¥ä¾¿ç¿»é¡µæ—¶è·å–
             request.setAttribute("page", currentPage);
-            // °Ñµ±Ç°Ò³Âë ´æÈësession
+            // æŠŠå½“å‰é¡µç  å­˜å…¥session
             request.getSession().setAttribute("currentProductPageNum", currentPage.getCurrentPageNum());
-            // ×ª·¢
+            // è½¬å‘
             request.getRequestDispatcher("/admin/product/searchedProductList.jsp").forward(request, response);
         }
     }
@@ -232,18 +234,20 @@ public class ProductServlet extends HttpServlet {
             pid = Integer.parseInt(request.getParameter("pid"));
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('cid²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('cidå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         int result = productService.deleteOneProduct(pid);
         switch (result) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('É¾³ıÉÌÆ·³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('åˆ é™¤å•†å“æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/productServlet?op=findPageProducts&num=" +
                         request.getSession().getAttribute("currentProductPageNum"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 
@@ -253,18 +257,18 @@ public class ProductServlet extends HttpServlet {
             currentPageNum = Integer.parseInt(request.getParameter("num"));
         }catch (Exception e){
             e.printStackTrace();
-            response.getWriter().println("<script>alert('num²ÎÊıÀàĞÍ´íÎó£¡');</script>");
+            response.getWriter().println("<script>alert('numå‚æ•°ç±»å‹é”™è¯¯ï¼');</script>");
         }
         Page currentPage = productService.listPageProducts(currentPageNum);
         if (currentPage == null) {
-            response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+            response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() == 0) {
-            response.getWriter().println("<script>alert('¸ÃÒ³ÉĞÎŞÉÌÆ·£¡');</script>");
+            response.getWriter().println("<script>alert('è¯¥é¡µå°šæ— å•†å“ï¼');</script>");
             return;
         } else if (currentPage.getList() != null && currentPage.getList().size() != 0) {
             request.setAttribute("page", currentPage);
-            // °Ñµ±Ç°Ò³Âë ´æÈësession
+            // æŠŠå½“å‰é¡µç  å­˜å…¥session
             request.getSession().setAttribute("currentProductPageNum", currentPage.getCurrentPageNum());
             request.getRequestDispatcher("/admin/product/productList.jsp").forward(request, response);
         }
@@ -281,10 +285,10 @@ public class ProductServlet extends HttpServlet {
         int addResult = productService.saveProduct(product);
         switch (addResult) {
             case 0:
-                response.getWriter().println("<script>alert('·şÎñÆ÷¿ªĞ¡²îÁË£¡');</script>");
+                response.getWriter().println("<script>alert('æœåŠ¡å™¨å¼€å°å·®äº†ï¼');</script>");
                 break;
             case 1:
-                response.getWriter().println("<script>alert('Ìí¼ÓÉÌÆ·³É¹¦£¡');</script>");
+                response.getWriter().println("<script>alert('æ·»åŠ å•†å“æˆåŠŸï¼');</script>");
                 response.setHeader("refresh", "0, url=" + request.getContextPath() + "/admin/productServlet?op=findPageProducts&num=" +
                         request.getSession().getAttribute("currentProductPageNum"));
                 break;

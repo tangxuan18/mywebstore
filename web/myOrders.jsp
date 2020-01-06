@@ -6,10 +6,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Shoes Store - Shopping Cart</title>
+    <title>web store - Shopping Cart</title>
     <meta name="keywords"
-          content="shoes store, shopping cart, free template, ecommerce, online shop, website templates, CSS, HTML"/>
-    <meta name="description" content="Shoes Store, Shopping Cart, online store template "/>
+          content="web store, shopping cart, free template, ecommerce, online shop, website templates, CSS, HTML"/>
+    <meta name="description" content="web store, Shopping Cart, online store template "/>
     <link href="templatemo_style.css" rel="stylesheet" type="text/css"/>
 
     <link rel="stylesheet" type="text/css" href="css/ddsmoothmenu.css"/>
@@ -43,7 +43,7 @@
     <div id="templatemo_wrapper">
 
         <div id="templatemo_header">
-            <div id="site_title"><h1><a href="http://localhost/${pageContext.request.contextPath }">Online Shoes
+            <div id="site_title"><h1><a href="http://localhost/${pageContext.request.contextPath }">web store
                 Store</a></h1></div>
             <div id="header_right">
                 <p>
@@ -122,33 +122,57 @@
                         <td>订单号</td>
                         <td>下单时间</td>
                         <td>订单总金额</td>
+                        <td>订单详情</td>
                         <td>订单状态</td>
                         <td>操作</td>
                     </tr>
-                    <c:forEach items="${orders }" var="order" varStatus="status">
+                    <c:forEach items="${requestScope.orders }" var="order" varStatus="status">
                         <tr style="color: grey">
-                            <td>${status.count}</td>
+                                <%--                            <td>${status.count}</td>--%>
+                            <td>${order.orderNum}</td>
                             <td>${order.orderTime}</td>
                             <td>${order.totalPrice }</td>
                             <td>
-                                <c:if test="${order.payStatus == 0}">订单已取消</c:if>
-                                <c:if test="${order.payStatus == 1}">已下单</c:if>
-                                <c:if test="${order.payStatus == 2}">已支付</c:if>
-                                <c:if test="${order.payStatus == 3}">已发货</c:if>
+                                <a href="${pageContext.request.contextPath}/orderServlet?op=userOrderDetail&orderNum=${order.orderNum}&toJsp=userOrderDetail">订单详情</a>
                             </td>
                             <td>
-                                <c:if test="${order.payStatus==1}">
-                                    <a href="${pageContext.request.contextPath}/orderServlet?op=cancelOrder&oid=${order.orderId}&state=0">取消订单</a>
-                                </c:if>
+                                <c:if test="${order.payStatus == -1}">卖家取消了订单</c:if>
+                                <c:if test="${order.payStatus == 0}">买家已取消订单</c:if>
+                                <c:if test="${order.payStatus == 1}">买家已下单，等待买家付款</c:if>
+                                <c:if test="${order.payStatus == 2}">买家已付款，准备发货</c:if>
+                                <c:if test="${order.payStatus == 3}">卖家已发货</c:if>
+                                <c:if test="${order.payStatus == 4}">买家已确认收货</c:if>
+                                <c:if test="${order.payStatus == 5}">买家申请退款</c:if>
+                                <c:if test="${order.payStatus == 6}">退款成功</c:if>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${order.payStatus == 1}">
+                                        <a href="javascript:if(confirm('确定取消订单吗?')) location='${pageContext.request.contextPath}/orderServlet?op=cancelOrder&oid=${order.orderId}'">取消订单</a>
+                                        <%--                                    <form id="_cancelOrder" method="post" action="${pageContext.request.contextPath}/orderServlet" >
+                                                                                <input type="hidden" name="op" value="cancelOrder"/>
+                                                                                <input type="hidden" name="oid" value="${order.orderId}"/>
+                                                                                <a href="javascript:if(confirm('确定取消订单吗?')) document.getElementById('_cancelOrder').submit();">取消订单</a>
+                                                                            </form>--%>
+                                    </c:when>
+                                    <c:when test="${order.payStatus == 3}">
+                                        <div>
+                                            <a href="javascript:if(confirm('确认收货吗?')) location='${pageContext.request.contextPath}/orderServlet?op=confirmProductsReceipt&oid=${order.orderId}'">确认收货</a>
+                                        </div>
+                                        <div>
+                                            <a href="javascript:if(confirm('确定申请退款吗?')) location='${pageContext.request.contextPath}/orderServlet?op=requestRefund&oid=${order.orderId}'">申请退款</a>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${order.payStatus == 2 || order.payStatus == 4}">
+                                        <a href="javascript:if(confirm('确定申请退款吗?')) location='${pageContext.request.contextPath}/orderServlet?op=requestRefund&oid=${order.orderId}'">申请退款</a>
+                                    </c:when>
+                                </c:choose>
+
                             </td>
                         </tr>
                     </c:forEach>
                 </table>
-
-
                 <p><a href="${pageContext.request.contextPath}/index.jsp">继续购物</a></p>
-
-
             </div>
             <div class="cleaner"></div>
         </div>

@@ -14,10 +14,10 @@
 <head>
     <base href="<%=basePath%>"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Shoes Store - Shopping Cart</title>
+    <title>web store - Shopping Cart</title>
     <meta name="keywords"
-          content="shoes store, shopping cart, free template, ecommerce, online shop, website templates, CSS, HTML"/>
-    <meta name="description" content="Shoes Store, Shopping Cart, online store template "/>
+          content="web store, shopping cart, free template, ecommerce, online shop, website templates, CSS, HTML"/>
+    <meta name="description" content="web store, Shopping Cart, online store template "/>
     <link href="templatemo_style.css" rel="stylesheet" type="text/css"/>
 
     <link rel="stylesheet" type="text/css" href="css/ddsmoothmenu.css"/>

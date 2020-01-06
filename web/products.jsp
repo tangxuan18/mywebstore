@@ -6,10 +6,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Shoes Store - Products</title>
+    <title>web store - Products</title>
     <meta name="keywords"
-          content="shoes store, products, free template, ecommerce, online shopping, website templates, CSS, HTML"/>
-    <meta name="description" content="Shoes Store, Products, free shopping template provided "/>
+          content="web store, products, free template, ecommerce, online shopping, website templates, CSS, HTML"/>
+    <meta name="description" content="web store, Products, free shopping template provided "/>
     <link href="templatemo_style.css" rel="stylesheet" type="text/css"/>
 
     <link rel="stylesheet" type="text/css" href="css/ddsmoothmenu.css"/>

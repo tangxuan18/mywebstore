@@ -74,14 +74,10 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<OrderItem> listOrderItems(String orderNum) {
-        List<OrderItem> orderItemList = null;
-        try {
-            orderItemList = runner.query("select * from t_orderItem where orderNum = ?", new BeanListHandler<>(OrderItem.class), orderNum);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orderItemList;
+    public List<OrderItem> listOrderItems(String orderNum) throws SQLException {
+        return runner.query("select oi.orderItemId, oi.uid, oi.pid, oi.productCount, oi.orderNum, p.productName, p.imgUrl, p.webStorePrice " +
+                        "from t_orderItem oi left join t_product p on oi.pid = p.id where oi.orderNum = ?",
+                new BeanListHandler<>(OrderItem.class), orderNum);
     }
 
     @Override
