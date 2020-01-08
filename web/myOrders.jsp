@@ -28,7 +28,7 @@
             classname: 'ddsmoothmenu', //class added to menu's outer DIV
             //customtheme: ["#1c5a80", "#18374a"],
             contentsource: "markup" //"markup" or ["container_id", "path_to_menu_file"]
-        })
+        });
 
     </script>
 
@@ -148,12 +148,19 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${order.payStatus == 1}">
-                                        <a href="javascript:if(confirm('确定取消订单吗?')) location='${pageContext.request.contextPath}/orderServlet?op=cancelOrder&oid=${order.orderId}'">取消订单</a>
-                                        <%--                                    <form id="_cancelOrder" method="post" action="${pageContext.request.contextPath}/orderServlet" >
-                                                                                <input type="hidden" name="op" value="cancelOrder"/>
-                                                                                <input type="hidden" name="oid" value="${order.orderId}"/>
-                                                                                <a href="javascript:if(confirm('确定取消订单吗?')) document.getElementById('_cancelOrder').submit();">取消订单</a>
-                                                                            </form>--%>
+                                        <div>
+                                            <a href="${pageContext.request.contextPath}/payServlet?op=payOrder&oid=${order.orderNum}">去支付</a>
+                                        </div>
+                                        <div>
+                                            <a href="javascript:if(confirm('确定取消订单吗?'))
+                                        location='${pageContext.request.contextPath}/orderServlet?op=cancelOrder&oid=${order.orderId}'">
+                                                取消订单</a>
+                                                <%--                                    <form id="_cancelOrder" method="post" action="${pageContext.request.contextPath}/orderServlet" >
+                                                                                        <input type="hidden" name="op" value="cancelOrder"/>
+                                                                                        <input type="hidden" name="oid" value="${order.orderId}"/>
+                                                                                        <a href="javascript:if(confirm('确定取消订单吗?')) document.getElementById('_cancelOrder').submit();">取消订单</a>
+                                                                                    </form>--%>
+                                        </div>
                                     </c:when>
                                     <c:when test="${order.payStatus == 3}">
                                         <div>

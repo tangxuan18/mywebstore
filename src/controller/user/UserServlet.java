@@ -137,7 +137,7 @@ public class UserServlet extends HttpServlet {
         }
         user.setRegistTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         user.setActivationCode("vip后台注册");
-        // 免邮箱注册
+        // 免邮箱注册，设置已激活邮箱
         user.setActivationStatus("Y");
         int result = userService.addUserBackground(user);
         switch (result) {

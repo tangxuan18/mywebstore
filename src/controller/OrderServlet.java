@@ -387,7 +387,7 @@ public class OrderServlet extends HttpServlet {
             response.getWriter().println("<script>alert('服务器开小差了！');</script>");
         } else if (orderList.size() == 0) {
             response.getWriter().println("<script>alert('尚无订单！');</script>");
-            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/cartServlet?op=findCart&cartJsp=shoppingcart");
+            response.setHeader("refresh", "0, url=" + request.getContextPath() + "/orderServlet?op=findUserOrders");
         } else {
             request.setAttribute("orders", orderList);
             request.getRequestDispatcher("/myOrders.jsp").forward(request, response);
@@ -420,6 +420,7 @@ public class OrderServlet extends HttpServlet {
     }
 
     private void findPageOrders(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+//        System.out.println(request.getRequestURL());
         int currentPageNum = 0;
         try {
             currentPageNum = Integer.parseInt(request.getParameter("num"));
